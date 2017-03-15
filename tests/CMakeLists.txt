@@ -5,6 +5,7 @@ include_directories (..)
 
 set(SRC 
   queue_tests.cpp
+  pipeline_tests.cpp
 )
 
 add_executable(tests ${SRC})
