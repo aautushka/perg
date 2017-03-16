@@ -169,5 +169,15 @@ bool glob_match(view buffer, view rawPattern)
 
 	return rawPattern.empty();
 }
+
+std::ostream& operator <<(std::ostream& stream, const view& v)
+{
+	for (size_t i = 0; i < v.size(); ++i)
+	{
+		stream << v[i];
+	}
+	return stream;
+}
+
 } // namespace perg
 

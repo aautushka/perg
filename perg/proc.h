@@ -1,6 +1,7 @@
 #pragma once
 
 #include "channel.h"
+#include "mask.h"
 
 namespace perg
 {
@@ -75,6 +76,25 @@ std::unique_ptr<proc<T>> make_filter(Func func)
 
 namespace filters
 {
+class mask_filter : public proc<view>
+{
+public:
+	explicit mask_filter(const char* mask)
+		: _mask(mask)
+	{
+	}
+
+protected:
+	bool process(view& v)
+	{
+		return glob_match(v, _mask);
+	}	
+	
+private:
+	view _mask;
+
+};
+
 } // namespace filters
 
 } // namespce perg

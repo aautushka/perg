@@ -1,5 +1,6 @@
 #pragma once
 #include <cstring>
+#include <iostream>
 
 namespace perg
 {
@@ -46,7 +47,7 @@ public:
 	{
 		if (!empty() && other._size == _size)
 		{
-			return memcmp(other._ptr, this->_ptr, this->_size); 
+			return 0 == memcmp(other._ptr, this->_ptr, this->_size); 
 		}
 
 		return false;
@@ -87,4 +88,5 @@ private:
 };
 
 bool glob_match(view buffer, view pattern);
+std::ostream& operator <<(std::ostream& stream, const view& v);
 } // namespace perg

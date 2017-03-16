@@ -7,6 +7,8 @@ set(SRC
   queue_tests.cpp
   pipeline_tests.cpp
   glob_match_tests.cpp
+  mask_filter_tests.cpp
+  view_tests.cpp
 )
 
 add_executable(tests ${SRC})
