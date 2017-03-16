@@ -73,5 +73,9 @@ std::unique_ptr<proc<T>> make_filter(Func func)
 	return std::unique_ptr<proc<T>>(ptr);
 };
 
-}
+namespace filters
+{
+} // namespace filters
+
+} // namespce perg
 

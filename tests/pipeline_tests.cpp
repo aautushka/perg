@@ -1,48 +1,8 @@
 #include <gtest/gtest.h>
 #include "perg/pipe.h"
 
-class test_source : public perg::source<int>
-{
-public: 
-	test_source(std::initializer_list<int> list)
-		: _vec(std::move(list))
-	{
-	}
-
-protected:
-	virtual bool process(int& i)
-	{
-		if (_pos < _vec.size())
-		{
-			i = _vec[_pos++];
-			return true;
-		}
-
-		return false;
-	}
-
-private:
-	std::vector<int> _vec;
-	size_t _pos = 0;
-};
-
-class test_sink : public perg::sink<int>
-{
-public:
-	std::vector<int> result()
-	{
-		return _vec;
-	}
-
-protected:
-	virtual void process(int i)
-	{
-		_vec.push_back(i);
-	}
-
-private:
-	std::vector<int> _vec;
-};
+using test_source = perg::sources::predefined<int>;
+using test_sink = perg::sinks::collector<int>;
 
 struct pipeline_test : public ::testing::Test
 {

@@ -7,6 +7,8 @@ set(SRC
   proc.h
   channel.h
   pipe.h
+  mask.h
+  mask.cpp
 )
 
-#add_library(perg ${SRC})
+add_library(perg ${SRC})

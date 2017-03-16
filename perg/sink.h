@@ -54,6 +54,37 @@ private:
 	template <typename U> friend class pipe;
 
 };
+namespace sinks
+{
 
-}
+template <typename T>
+class collector : public perg::sink<T>
+{
+public:
+	std::vector<T> result()
+	{
+		return _vec;
+	}
+
+protected:
+	virtual void process(T t)
+	{
+		_vec.push_back(t);
+	}
+
+private:
+	std::vector<T> _vec;
+};
+
+template <typename T>
+class console : public perg::sink<T>
+{
+protected:
+	virtual void process(T t)
+	{
+		std::cout << t << std::endl;
+	}
+};
+} // namespace sinks
+} // namespace perg
 
