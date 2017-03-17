@@ -3,10 +3,10 @@
 namespace perg
 {
 template <typename T>
-class list
+class intrusive_list
 {
 public:
-	list()
+	intrusive_list()
 		: head(nullptr)
 		, tail(nullptr)
 	{
@@ -139,10 +139,70 @@ private:
 
 	node* head;
 	node* tail;
-// list<int> llst;
-// list<int>::node n(1);
-// list<int>::node n(2);
-// lst.push_back(n1); lst.push_back(n2);
-
 };
+
+template <typename T>
+class list
+{
+public:
+	list()
+	{
+	}
+
+	void push_back(T t)
+	{
+		node_t* node = new node_t(std::move(t));
+		_list.push_back(*node);
+	}
+
+	void push_front(T t)
+	{
+		node_t* node = new node_t(std::move(t));
+		_list.push_front(*node);
+	}
+
+	bool empty() const
+	{
+		return _list.empty();
+	}
+
+	size_t size() const
+	{
+		return _list.size();
+	}
+
+	const T& front() const
+	{
+		return _list.front().data;
+	}
+
+	const T& back() const
+	{
+		return _list.back().data;
+	}
+
+	void clear(){ _list.clear(); }
+
+	T pop_front()
+	{
+		node_t& node = _list.pop_front();
+		T t = std::move(node.data);
+		delete &node;
+		return std::move(t);
+	}
+
+	T pop_back()
+	{
+		node_t& node = _list.pop_back();
+		T t = std::move(node.data);
+		delete &node;
+		return std::move(t);
+	}
+
+private:
+	using list_t = intrusive_list<T>;
+	using node_t = typename list_t::node;
+	list_t _list;
+};
+
 } // namespace perg

@@ -3,7 +3,7 @@
 
 struct intrusive_list_tests : public ::testing::Test
 {
-	using mylist = perg::list<int>;
+	using mylist = perg::intrusive_list<int>;
 	mylist list;
 };
 

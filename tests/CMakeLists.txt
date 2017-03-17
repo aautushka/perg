@@ -10,6 +10,7 @@ set(SRC
   mask_filter_tests.cpp
   view_tests.cpp
   intrusive_list_tests.cpp
+  list_tests.cpp
 )
 
 add_executable(tests ${SRC})
