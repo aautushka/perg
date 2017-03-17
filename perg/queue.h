@@ -1,7 +1,7 @@
 #pragma once
 
-#include <list>
 #include <mutex>
+#include "intrusive.h"
 
 namespace perg
 {
@@ -33,8 +33,7 @@ public:
 		std::lock_guard<std::mutex> lock(_mutex);
 		if (!_data.empty())
 		{
-			t = _data.front();
-			_data.pop_front();
+			t = _data.pop_front();
 			return true;
 		}
 
@@ -42,7 +41,7 @@ public:
 	}
 
 private:
-	std::list<T> _data;
+	perg::list<T> _data;
 	std::mutex _mutex;
 
 };

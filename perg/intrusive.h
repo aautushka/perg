@@ -12,6 +12,9 @@ public:
 	{
 	}
 
+	intrusive_list(const intrusive_list<T>&) = delete;
+	intrusive_list<T>& operator =(const intrusive_list<T>&) = delete;
+
 	struct node
 	{
 		node() : prev(nullptr), next(nullptr){}
@@ -148,6 +151,9 @@ public:
 	list()
 	{
 	}
+
+	list(const list<T>&) = delete;
+	list<T>& operator =(const list<T>&) = delete;
 
 	void push_back(T t)
 	{
