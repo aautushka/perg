@@ -210,9 +210,9 @@ public:
 	}
 
 	T& back() { return _list.back().data; }
-	T& front() {return _list.back().data; }
+	T& front() {return _list.front().data; }
 	const T& back() const {return _list.back().data; }
-	const T& front() const {return _list.back().data; }
+	const T& front() const {return _list.front().data; }
 
 private:
 	using list_t = intrusive_list<T>;

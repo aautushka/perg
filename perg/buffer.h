@@ -30,6 +30,7 @@ public:
 	void clear() { off = 0;}
 	size_t occupied() {return off;}
 	char* begin() { return ptr; }
+	size_t capacity() const { return size; }
 
 private:
 	char* ptr;
@@ -135,7 +136,7 @@ private:
 	{
 		static const size_t GROW_RATE = 2;
 		static const size_t LIMIT = 1024 * 1024;
-		_slab_size = std::min(GROW_RATE * _slab_size, LIMIT);
+		_slab_size = std::min(GROW_RATE * _slabs.back().capacity(), LIMIT);
 	}
 
 	list<slab> _slabs;

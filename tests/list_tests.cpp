@@ -36,6 +36,7 @@ TEST_F(list_tests, inserts_several_nodes)
 	list.push_back(123);
 	list.push_back(456);
 	list.push_back(789);
+
 	EXPECT_EQ(123, list.front()); 
 	EXPECT_EQ(789, list.back());
 }
