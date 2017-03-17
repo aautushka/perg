@@ -8,7 +8,7 @@ using test_sink = perg::sinks::collector<perg::view>;
 struct mask_filter_test : public ::testing::Test
 {
 	using result = std::vector<perg::view>;
-	perg::mypipeline<perg::view> pipeline;
+	perg::pipeline<perg::view> pipeline;
 };
 
 TEST_F(mask_filter_test, filter_out_strings_which_do_not_match_the_given_mask)

@@ -29,7 +29,7 @@ private:
 
 	channel<T> _channel;
 
-	template <typename U> friend class mypipeline;
+	template <typename U> friend class pipeline;
 };
 
 

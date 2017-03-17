@@ -6,7 +6,7 @@ using test_sink = perg::sinks::collector<int>;
 
 struct pipeline_test : public ::testing::Test
 {
-	perg::mypipeline<int> pipeline;
+	perg::pipeline<int> pipeline;
 };
 
 TEST_F(pipeline_test, connects_source_to_sink_directly)

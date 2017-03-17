@@ -52,7 +52,7 @@ private:
 
 	channel<T>* _input = nullptr;
 
-	template <typename U> friend class mypipeline;
+	template <typename U> friend class pipeline;
 
 };
 namespace sinks

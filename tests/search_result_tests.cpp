@@ -6,7 +6,7 @@ using test_source = perg::sources::generator<perg::view>;
 
 struct search_result_tests : public ::testing::Test
 {
-	perg::mypipeline<perg::view> pipeline;
+	perg::pipeline<perg::view> pipeline;
 	perg::search_result sink;
 };
 

@@ -57,7 +57,7 @@ private:
 	channel<T>* _input = nullptr;
 	channel<T> _output;
 
-	template <typename U> friend class mypipeline;
+	template <typename U> friend class pipeline;
 };
 
 template <typename T, typename Func> 

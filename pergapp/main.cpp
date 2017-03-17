@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	perg::mypipeline<perg::view> pipeline;
+	perg::pipeline<perg::view> pipeline;
 	perg::filters::mask_filter mask(searchMask);
 	perg::search_result result;
 	

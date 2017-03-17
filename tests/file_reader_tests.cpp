@@ -4,7 +4,7 @@
 
 struct file_reader_tests : public ::testing::Test
 {
-	perg::mypipeline<perg::view> pipeline;
+	perg::pipeline<perg::view> pipeline;
 	perg::sinks::collector<perg::view> sink;
 	perg::file_reader source;
 	tests::temp_file file;
