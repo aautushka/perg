@@ -4,6 +4,34 @@
 namespace perg
 {
 
+class stream
+{
+public:
+	virtual ~stream() { }
+	virtual void write(const void* data, size_t size) = 0;
+};
+
+class stdcout_stream : public stream
+{
+public:
+	virtual void write(const void* data, size_t size)
+	{
+		//::write(stdout, data, size);
+	}
+};
+
+class string_stream : public perg::stream
+{
+public:
+	virtual void write(const void* data, size_t size)
+	{
+		str.append(static_cast<const char*>(data), size);
+	}
+
+	std::string str;
+};
+
+
 class slab
 {
 public:
@@ -96,14 +124,20 @@ public:
 	T convert()
 	{
 		T t;
-		while (!_slabs.empty())
+		for (list<slab>::iterator i = _slabs.begin(); i != _slabs.end(); ++i)
 		{
-			slab s = _slabs.pop_front();
-			t.append(s.begin(), s.occupied());
-			delete[] s.begin();
+			t.append(i->begin(), i->occupied());
 		}
 
-		return t;
+		return std::move(t);
+	}
+
+	void dump(stream& ss)
+	{
+		for (list<slab>::iterator i = _slabs.begin(); i != _slabs.end(); ++i)
+		{
+			ss.write(i->begin(), i->occupied());
+		}
 	}
 
 private:

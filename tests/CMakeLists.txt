@@ -12,6 +12,7 @@ set(SRC
   intrusive_list_tests.cpp
   list_tests.cpp
   buffer_tests.cpp
+  search_result_tests.cpp
 )
 
 add_executable(tests ${SRC})

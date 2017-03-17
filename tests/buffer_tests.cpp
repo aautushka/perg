@@ -37,9 +37,19 @@ TEST_F(buffer_tests, count_number_of_bytes_written)
 }
 
 
-TEST_F(buffer_tests, allocates_a_little_more_than_needed_for_optimization_purposes)
-{
+TEST_F(buffer_tests, allocates_a_little_more_than_needed_for_optimization_purposes) {
 	buf.copy("h");
 	buf.copy("e");
 	EXPECT_GT(buf.capacity(), buf.size());
 }
+
+TEST_F(buffer_tests, writes_buffer_to_stream)
+{
+ 	buf.copy("hello ");
+	buf.copy("world");
+
+	perg::string_stream stream;	
+	buf.dump(stream);
+ 	EXPECT_EQ("hello world", stream.str); 
+}
+ 
