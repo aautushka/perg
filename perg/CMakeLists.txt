@@ -1,4 +1,4 @@
-project(perg CXX)
+project(libperg CXX)
 
 set(SRC 
   queue.h
@@ -15,4 +15,4 @@ set(SRC
   perg.h
 )
 
-add_library(perg ${SRC})
+add_library(libperg ${SRC})

@@ -1,4 +1,5 @@
 #pragma once
+#include <cstring>
 #include "intrusive.h"
 
 namespace perg
@@ -11,12 +12,12 @@ public:
 	virtual void write(const void* data, size_t size) = 0;
 };
 
-class stdcout_stream : public stream
+class stdout_stream : public stream
 {
 public:
 	virtual void write(const void* data, size_t size)
 	{
-		//::write(stdout, data, size);
+		fwrite(data, sizeof(char), size, stdout);	
 	}
 };
 

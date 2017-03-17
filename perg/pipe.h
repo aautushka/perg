@@ -1,6 +1,7 @@
 #pragma once
 
 #include <thread>
+#include <cassert>
 
 #include "source.h"
 #include "sink.h"

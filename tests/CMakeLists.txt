@@ -13,7 +13,8 @@ set(SRC
   list_tests.cpp
   buffer_tests.cpp
   search_result_tests.cpp
+  file_reader_tests.cpp
 )
 
 add_executable(tests ${SRC})
-target_link_libraries(tests gtest gtest_main pthread perg)
+target_link_libraries(tests gtest gtest_main pthread libperg)
