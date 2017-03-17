@@ -1,13 +1,14 @@
 #include <gtest/gtest.h>
 #include "perg/pipe.h"
+#include "perg/mask_filter.h"
 
-using test_source = perg::sources::predefined<perg::view>;
+using test_source = perg::sources::generator<perg::view>;
 using test_sink = perg::sinks::collector<perg::view>;
 
 struct mask_filter_test : public ::testing::Test
 {
 	using result = std::vector<perg::view>;
-	perg::pipe<perg::view> pipeline;
+	perg::mypipeline<perg::view> pipeline;
 };
 
 TEST_F(mask_filter_test, filter_out_strings_which_do_not_match_the_given_mask)

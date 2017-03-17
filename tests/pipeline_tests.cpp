@@ -1,12 +1,12 @@
 #include <gtest/gtest.h>
 #include "perg/pipe.h"
 
-using test_source = perg::sources::predefined<int>;
+using test_source = perg::sources::generator<int>;
 using test_sink = perg::sinks::collector<int>;
 
 struct pipeline_test : public ::testing::Test
 {
-	perg::pipe<int> pipeline;
+	perg::mypipeline<int> pipeline;
 };
 
 TEST_F(pipeline_test, connects_source_to_sink_directly)

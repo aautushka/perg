@@ -1,5 +1,5 @@
 #pragma once
-#include <cstring>
+#include <string.h>
 #include <iostream>
 
 namespace perg
@@ -8,8 +8,8 @@ class view
 {
 public:
 	view(): _ptr(""), _size(0){}
-	view(const char* str): _ptr(str), _size(strlen(str)) { }
-	view(const char* str, size_t size): _ptr(str), _size(size) {} 
+	view(const char* str){assign(str);}
+	view(const char* str, size_t size){assign(str, size);} 
 
 	const char& operator [](int i) const
 	{

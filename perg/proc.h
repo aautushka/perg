@@ -1,7 +1,7 @@
 #pragma once
 
 #include "channel.h"
-#include "mask.h"
+#include "pipe.h"
 
 namespace perg
 {
@@ -57,7 +57,7 @@ private:
 	channel<T>* _input = nullptr;
 	channel<T> _output;
 
-	template <typename U> friend class pipe;
+	template <typename U> friend class mypipeline;
 };
 
 template <typename T, typename Func> 
@@ -76,23 +76,18 @@ std::unique_ptr<proc<T>> make_filter(Func func)
 
 namespace filters
 {
-class mask_filter : public proc<view>
+template <typename T>
+class pass_thru : public proc<T>
 {
-public:
-	explicit mask_filter(const char* mask)
-		: _mask(mask)
-	{
-	}
-
 protected:
-	bool process(view& v)
-	{
-		return glob_match(v, _mask);
-	}	
-	
-private:
-	view _mask;
+	virtual bool process(T& t) { return true; }
+};
 
+template <typename T>
+class block : public proc<T>
+{
+protected:
+	virtual bool process(T& t) { return false; }
 };
 
 } // namespace filters

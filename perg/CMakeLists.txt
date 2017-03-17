@@ -10,6 +10,7 @@ set(SRC
   mask.h
   mask.cpp
   intrusive.h
+  mask_filter.h
 )
 
 add_library(perg ${SRC})

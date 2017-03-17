@@ -10,13 +10,13 @@ namespace perg
 {
 
 template <typename T>
-class pipe
+class mypipeline
 {
 public:
 	class connection
 	{
 	public:
-		connection(pipe<T>& p)
+		connection(mypipeline<T>& p)
 			: _pipe(p)
 		{
 		}
@@ -34,7 +34,7 @@ public:
 		}
 
 	private:
-		pipe<T>& _pipe;
+		mypipeline<T>& _pipe;
 	};
 
 	connection connect(source<T>& input)
@@ -48,7 +48,7 @@ public:
 		return connection(*this);
 	}
 
-	~pipe()
+	~mypipeline()
 	{
 		wait();
 	}

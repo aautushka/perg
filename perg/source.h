@@ -28,17 +28,17 @@ private:
 
 	channel<T> _channel;
 
-	template <typename U> friend class pipe;
+	template <typename U> friend class mypipeline;
 };
 
 
 namespace sources
 {
 template <typename T> 
-class predefined : public perg::source<T>
+class generator : public perg::source<T>
 {
 public: 
-	predefined(std::initializer_list<T> list)
+	generator(std::initializer_list<T> list)
 		: _vec(std::move(list))
 	{
 	}

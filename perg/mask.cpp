@@ -1,5 +1,5 @@
 #include "mask.h"
-
+#include <cstring>
 #include <cassert>
 
 namespace perg
