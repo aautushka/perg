@@ -172,11 +172,7 @@ bool glob_match(view buffer, view rawPattern)
 
 std::ostream& operator <<(std::ostream& stream, const view& v)
 {
-	for (size_t i = 0; i < v.size(); ++i)
-	{
-		stream << v[i];
-	}
-	return stream;
+	return stream.write(v.data(), v.size());
 }
 
 } // namespace perg
