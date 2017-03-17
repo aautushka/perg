@@ -11,8 +11,9 @@ int main(int argc, char* argv[])
 	int c = 0;
 	const char* filename = "";
 	const char* searchMask = "";
+	bool reverse = false;
 
-	while ((c = getopt(argc, argv, "hi:m:")) != -1)
+	while ((c = getopt(argc, argv, "rhi:m:")) != -1)
 	{
 		switch (c)
 		{
@@ -24,6 +25,9 @@ int main(int argc, char* argv[])
 			case 'm':
 				searchMask = optarg;
 				break;
+			case 'r':
+				reverse = true;
+				break;
 			default:
 				std::cout << "Invalid argument: " << (char)c << std::endl;
 				exit(1);
@@ -31,12 +35,21 @@ int main(int argc, char* argv[])
 	}
 
 	perg::mypipeline<perg::view> pipeline;
-	perg::file_reader file(filename);
 	perg::filters::mask_filter mask(searchMask);
 	perg::search_result result;
-
-	pipeline.connect(file)(mask)(result);
-	pipeline.wait();
+	
+	if (reverse)
+	{
+		perg::reverse_file_reader file(filename);
+		pipeline.connect(file)(mask)(result);
+		pipeline.wait();
+	}
+	else
+	{
+		perg::file_reader file(filename);
+		pipeline.connect(file)(mask)(result);
+		pipeline.wait();
+	}
 
 	perg::stdout_stream stream;
 	result.dump(stream);
