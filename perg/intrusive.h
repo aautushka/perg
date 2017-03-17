@@ -131,6 +131,20 @@ public:
 		assert(tail != nullptr);
 		return *tail;	
 	}	
+
+
+	node& front() 
+	{
+		assert(head != nullptr);
+		return *head;
+	}
+
+	node& back()
+	{
+		assert(tail != nullptr);
+		return *tail;
+	}
+	
 private:
 	void init(node& n)
 	{
@@ -177,16 +191,6 @@ public:
 		return _list.size();
 	}
 
-	const T& front() const
-	{
-		return _list.front().data;
-	}
-
-	const T& back() const
-	{
-		return _list.back().data;
-	}
-
 	void clear(){ _list.clear(); }
 
 	T pop_front()
@@ -204,6 +208,11 @@ public:
 		delete &node;
 		return std::move(t);
 	}
+
+	T& back() { return _list.back().data; }
+	T& front() {return _list.back().data; }
+	const T& back() const {return _list.back().data; }
+	const T& front() const {return _list.back().data; }
 
 private:
 	using list_t = intrusive_list<T>;
