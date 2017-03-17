@@ -38,18 +38,27 @@ int main(int argc, char* argv[])
 	perg::filters::mask_filter mask(searchMask);
 	perg::search_result result;
 	
-	if (reverse)
+	if (*filename)
 	{
-		perg::reverse_file_reader file(filename);
-		pipeline.connect(file)(mask)(result);
-		pipeline.wait();
+		if (reverse)
+		{
+			perg::reverse_file_reader file(filename);
+			pipeline.connect(file)(mask)(result);
+			pipeline.wait();
+		}
+		else
+		{
+			perg::file_reader file(filename);
+			pipeline.connect(file)(mask)(result);
+			pipeline.wait();
+		}
 	}
 	else
 	{
-		perg::file_reader file(filename);
-		pipeline.connect(file)(mask)(result);
+		perg::stdin_reader source;
+		pipeline.connect(source)(mask)(result);
 		pipeline.wait();
-	}
+	} 
 
 	perg::stdout_stream stream;
 	result.dump(stream);

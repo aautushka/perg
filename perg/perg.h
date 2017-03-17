@@ -190,6 +190,37 @@ private:
 
 };
 
+class stdin_reader : public source<view>
+{
+public:
+	~stdin_reader()
+	{
+		while (!_lines.empty())
+		{
+			char* line = _lines.pop_back();
+			free(line);
+		}
+	}
+	
+protected:
+	virtual bool process(view& v)
+	{
+		size_t size = 0;
+		char* ptr = nullptr;
+		if (-1 != getline(&ptr, &size, stdin))
+		{
+			v.assign(ptr, size);
+			_lines.push_back(ptr);
+			return true;
+		}
+
+		return false;
+	}
+
+private:
+	list<char*> _lines;
+};
+
 } //namespace perg
 
 
