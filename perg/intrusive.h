@@ -89,7 +89,6 @@ public:
 		{
 			clear();
 		}
-		tail->prev->next = nullptr;
 		res->prev = nullptr;
 		return *res;
 	}
