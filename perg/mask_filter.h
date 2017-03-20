@@ -15,9 +15,9 @@ public:
 	}
 
 protected:
-	virtual bool process(view& v)
+	virtual action process(view& v)
 	{
-		return glob_match(v, _mask);
+		return glob_match(v, _mask) ? PASS_DOWNSTREAM : FILTER_OUT;
 	}	
 	
 private:

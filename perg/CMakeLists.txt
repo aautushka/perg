@@ -13,6 +13,7 @@ set(SRC
   mask_filter.h
   buffer.h
   perg.h
+  stage.h
 )
 
 add_library(libperg ${SRC})

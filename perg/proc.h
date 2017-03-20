@@ -2,29 +2,26 @@
 
 #include "channel.h"
 #include "pipe.h"
+#include "stage.h"
 
 namespace perg
 {
 
 template <typename T>
-class proc
+class proc : public stage<T>
 {
 public:
 	virtual ~proc() {}
 
-protected:
-	virtual bool process(T& t) = 0;
-
 private:
 	void run()
 	{
-		while (_input->active())
+		while (_input->active()) 
 		{
 			process_one();
 		}
 
-		flush();
-
+		process_remaining();
 		_output.close();
 	}
 
@@ -34,17 +31,18 @@ private:
 
 		if (_input->try_read(t))
 		{
-			if (process(t))
+			action act = this->process(t);
+			if (act == PASS_DOWNSTREAM)
 			{
 				_output.write(t);
 			}
-			return true;
+			return act !=  TERMINATE;
 		}
 
 		return false;
 	}
 
-	void flush()
+	void process_remaining()
 	{
 		while (process_one());
 	}
@@ -66,7 +64,7 @@ std::unique_ptr<proc<T>> make_filter(Func func)
 	struct proc_type : public proc<T>
 	{
 		proc_type(Func func) : func(func) {}
-		virtual bool process(T& t) {return func(t);}
+		virtual action process(T& t) {return func(t);}
 		Func func;
 	};
 
@@ -80,14 +78,14 @@ template <typename T>
 class pass_thru : public proc<T>
 {
 protected:
-	virtual bool process(T& t) { return true; }
+	virtual action process(T& t) { return PASS_DOWNSTREAM; }
 };
 
 template <typename T>
 class block : public proc<T>
 {
 protected:
-	virtual bool process(T& t) { return false; }
+	virtual action process(T& t) { return FILTER_OUT; }
 };
 
 } // namespace filters

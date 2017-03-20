@@ -2,26 +2,29 @@
 
 #include <vector>
 #include "channel.h"
+#include "stage.h"
 
 namespace perg
 {
 
 template <typename T>
-class source
+class source : public stage<T>
 {
 public:
 	virtual ~source() {}
-
-protected:
-	virtual bool process(T& t) = 0;
 
 private:
 	void run()
 	{
 		T t;
-		while (process(t))
+		action act = UNDECIDED; 
+		while (act != TERMINATE)
 		{
-			_channel.write(t);
+			act = this->process(t);
+			if (act == PASS_DOWNSTREAM)
+			{
+				_channel.write(t);
+			}
 		}
 
 		_channel.close();
@@ -45,15 +48,15 @@ public:
 	}
 
 protected:
-	virtual bool process(T& i)
+	virtual action process(T& i)
 	{
 		if (_pos < _vec.size())
 		{
 			i = _vec[_pos++];
-			return true;
+			return PASS_DOWNSTREAM;
 		}
 
-		return false;
+		return TERMINATE;
 	}
 
 private:

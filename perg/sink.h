@@ -2,18 +2,17 @@
 
 #include <iostream>
 #include "channel.h"
+#include "stage.h"
 
 namespace perg
 {
 
 template <typename T>
-class sink
+class sink : public stage<T>
 {
 public:
 	virtual ~sink() {}
-protected:
-	virtual void process(T t) = 0;
-
+	
 private:
 	void run()
 	{
@@ -22,27 +21,31 @@ private:
 			process_one();
 		}
 
-		flush();
+		process_remaining();
 	}
 
-	void process_one()
+	// returns true if needs to continue processing
+	// returns false to terminate immediately
+	bool process_one()
 	{
 		T t;
 
 		if (_input->try_read(t))
 		{
-			process(t);
+			if (TERMINATE != this->process(t))
+			{
+				return true;
+			}
+
+			_input->close();
 		}
+
+		return false;	
 	}
 
-	void flush()
+	bool process_remaining()
 	{
-		T t;
-
-		while (_input->try_read(t))
-		{
-			process(t);
-		}
+		while (process_one());
 	}
 
 	bool connected()
@@ -62,28 +65,48 @@ template <typename T>
 class collector : public perg::sink<T>
 {
 public:
+	collector()
+		: _limit(std::numeric_limits<size_t>::max())
+	{
+	}
+
 	std::vector<T> result()
 	{
 		return _vec;
 	}
 
-protected:
-	virtual void process(T t)
+	void limit(size_t maxNumOfCollectedItems)
 	{
-		_vec.push_back(t);
+		_limit = maxNumOfCollectedItems;
+	}
+
+protected:
+	virtual action process(T& t)
+	{
+		if (_vec.size() < _limit)
+		{
+			_vec.push_back(t);
+			return UNDECIDED;
+		}
+		else
+		{
+			return TERMINATE;
+		}
 	}
 
 private:
 	std::vector<T> _vec;
+	size_t _limit;
 };
 
 template <typename T>
 class console : public perg::sink<T>
 {
 protected:
-	virtual void process(T t)
+	virtual action process(T& t)
 	{
 		std::cout << t << std::endl;
+		return UNDECIDED;
 	}
 };
 } // namespace sinks

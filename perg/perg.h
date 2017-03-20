@@ -20,9 +20,10 @@ public:
 	}
 
 protected:
-	virtual void process(view v)
+	virtual action process(view& v)
 	{
 		_buffer.copy(v.data(), v.size());
+		return UNDECIDED;
 	}
 
 private:
@@ -79,7 +80,7 @@ public:
 	}
 
 protected:
-	virtual bool process(view& v)
+	virtual action process(view& v)
 	{
 		if (_cur_ptr != _file_end)
 		{
@@ -96,9 +97,10 @@ protected:
 			v.assign(_cur_ptr, nextLine - _cur_ptr);
 			_cur_ptr = nextLine;
 			
-			return true;
+
+			return PASS_DOWNSTREAM;
 		}
-		return false;
+		return TERMINATE;
 	}
 private:
 	int _file_desc;
@@ -159,7 +161,7 @@ public:
 	}
 
 protected:
-	virtual bool process(view& v)
+	virtual action process(view& v)
 	{
 		if (_cur_ptr != _file_ptr)
 		{
@@ -177,9 +179,9 @@ protected:
 			v.assign(thisLine, _cur_ptr - thisLine);
 			_cur_ptr = thisLine;
 			
-			return true;
+			return PASS_DOWNSTREAM;
 		}
-		return false;
+		return TERMINATE;
 	}
 private:
 	int _file_desc;
@@ -203,7 +205,7 @@ public:
 	}
 	
 protected:
-	virtual bool process(view& v)
+	virtual action process(view& v)
 	{
 		size_t size = 0;
 		char* ptr = nullptr;
@@ -211,10 +213,10 @@ protected:
 		{
 			v.assign(ptr, size);
 			_lines.push_back(ptr);
-			return true;
+			return PASS_DOWNSTREAM;
 		}
 
-		return false;
+		return TERMINATE;
 	}
 
 private:
