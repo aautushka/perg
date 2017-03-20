@@ -12,8 +12,9 @@ int main(int argc, char* argv[])
 	const char* filename = "";
 	const char* searchMask = "";
 	bool reverse = false;
+	int lines = 1000;
 
-	while ((c = getopt(argc, argv, "rhi:m:")) != -1)
+	while ((c = getopt(argc, argv, "rhi:m:l:")) != -1)
 	{
 		switch (c)
 		{
@@ -28,6 +29,10 @@ int main(int argc, char* argv[])
 			case 'r':
 				reverse = true;
 				break;
+			case 'l':
+				lines = std::min(1000, atoi(optarg));
+				break;
+				
 			default:
 				std::cout << "Invalid argument: " << (char)c << std::endl;
 				exit(1);
@@ -37,6 +42,8 @@ int main(int argc, char* argv[])
 	perg::pipeline<perg::view> pipeline;
 	perg::filters::mask_filter mask(searchMask);
 	perg::search_result result;
+
+	result.limit(lines);
 	
 	if (*filename)
 	{

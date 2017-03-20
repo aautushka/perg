@@ -14,20 +14,38 @@ namespace perg
 class search_result : public sink<view>
 {
 public:
+	search_result()
+		: _limit(0)
+		, _count(0)
+	{
+	}
+
 	void dump(stream& ss)
 	{
 		_buffer.dump(ss);
 	}
 
+	void limit(int num)
+	{
+		_limit = num;
+	}
+
 protected:
 	virtual action process(view& v)
 	{
-		_buffer.copy(v.data(), v.size());
-		return UNDECIDED;
+		if (_count < _limit)
+		{
+			++_count;
+			_buffer.copy(v.data(), v.size());
+			return UNDECIDED;
+		}
+		return TERMINATE;
 	}
 
 private:
 	buffer _buffer;
+	int _limit;
+	int _count;
 };
 
 class file_reader : public source<view>
