@@ -15,7 +15,7 @@ class search_result : public sink<view>
 {
 public:
 	search_result()
-		: _limit(0)
+		: _limit(std::numeric_limits<int>::max())
 		, _count(0)
 	{
 	}
@@ -128,6 +128,16 @@ private:
 	size_t _file_size;
 
 };
+
+#ifndef __linux__
+inline void* memrchr(const void* ptr, int ch, size_t len)
+{
+	if (!len) return nullptr;
+	const unsigned char* p = (const unsigned char*)ptr + len - 1;
+	while (*p != ch && p-- != ptr);
+	return p >= ptr ? (void*)p : nullptr;
+}
+#endif
 
 class reverse_file_reader : public source<view>
 {
