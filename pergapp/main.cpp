@@ -2,8 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <getopt.h>
 
 #include "perg/perg.h"
+
 #include "perg/mask_filter.h"
 
 int main(int argc, char* argv[])
@@ -14,13 +16,32 @@ int main(int argc, char* argv[])
 	bool reverse = false;
 	int lines = 1000;
 
-	while ((c = getopt(argc, argv, "rhi:m:l:")) != -1)
+	struct option opts[] = {
+		{ "help",      no_argument,       0, 'h'},
+		{ "file_path", required_argument, 0, 'f'},
+		{ "mask",      required_argument, 0, 'm'},
+		{ "max_lines", required_argument, 0, 'l'},
+		{ "scan_tail", no_argument,       0, 'r'},
+		{ "separator", required_argument, 0, 's'},
+		{ 0, 0, 0, 0}};
+
+	int optindex = 0;
+	while ((c = getopt_long(argc, argv, "hf:m:l:rs:", opts, &optindex)) != -1)
 	{
 		switch (c)
 		{
 			case 'h':
-				break;
-			case 'i':
+				std::cout <<
+				       	"perg - the grep defiled\n\n"
+					"Options\n"
+					"--help,h         print this message\n"
+					"--file_path,f    input file; stdin if no file provided\n"
+					"--mask,m         search mask (*? are allowed\n"
+					"--max_lines,l    max result lines, default is 1000\n"
+					"--scan_tail,r    read file backwards\n"
+					"--separator,s    found lines separator\n";
+				return 0;
+			case 'f':
 				filename = optarg;
 				break;
 			case 'm':
@@ -35,7 +56,7 @@ int main(int argc, char* argv[])
 				
 			default:
 				std::cout << "Invalid argument: " << (char)c << std::endl;
-				exit(1);
+				return 1;
 		}
 	}
 
