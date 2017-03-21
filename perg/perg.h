@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <chrono>
 
 #include "pipe.h"
 #include "buffer.h"
@@ -11,12 +12,31 @@
 
 namespace perg
 {
+
+class metric
+{
+public:
+	metric()
+	{
+		started = std::chrono::steady_clock::now();
+	}
+	~metric()
+	{
+		auto stopped = std::chrono::steady_clock::now();
+		std::cout << "elapsed " << (stopped - started).count() << std::endl;
+	}
+private:
+	using time_t = std::chrono::time_point<std::chrono::steady_clock>;
+	time_t started;
+};
+
 class search_result : public sink<view>
 {
 public:
 	search_result()
 		: _limit(std::numeric_limits<int>::max())
 		, _count(0)
+		, _separator(0)
 	{
 	}
 
@@ -29,6 +49,11 @@ public:
 	{
 		_limit = num;
 	}
+	
+	void separate_by(char separator)
+	{
+		_separator = separator; 
+	}
 
 protected:
 	virtual action process(view& v)
@@ -37,6 +62,12 @@ protected:
 		{
 			++_count;
 			_buffer.copy(v.data(), v.size());
+
+			if (_separator)
+			{
+				_buffer.copy(&_separator, 1);
+			}
+
 			return UNDECIDED;
 		}
 
@@ -47,6 +78,7 @@ private:
 	buffer _buffer;
 	int _limit;
 	int _count;
+	char _separator;
 };
 
 class file_reader : public source<view>
@@ -82,7 +114,7 @@ public:
 			if (fstat(_file_desc, &sb) != -1)
 			{
 				_file_size = sb.st_size;
-				_file_ptr = (char*)mmap(0, _file_size, PROT_READ, MAP_SHARED, _file_desc, 0);
+				_file_ptr = (char*)mmap(0, _file_size, PROT_READ, MAP_PRIVATE, _file_desc, 0);
 				_file_end = _file_ptr + _file_size;
 				_cur_ptr = _file_ptr;
 			}
@@ -104,16 +136,19 @@ protected:
 		if (_cur_ptr != _file_end)
 		{
 			char* nextLine = (char*)memchr(_cur_ptr, '\n', _file_end - _cur_ptr);
+			size_t size = 0;
 			if (nextLine)
 			{
-				nextLine += 1;
+				// we do not count the newline char
+				size = nextLine++ - _cur_ptr;
 			}
 			else
 			{
 				nextLine = _file_end;
+				size = nextLine - _cur_ptr;
 			}
 			
-			v.assign(_cur_ptr, nextLine - _cur_ptr);
+			v.assign(_cur_ptr, size);
 			_cur_ptr = nextLine;
 			
 
@@ -196,16 +231,18 @@ protected:
 		{
 			char* lineEnd = _cur_ptr[-1] == '\n' ? _cur_ptr - 1 : _cur_ptr;
 			char* thisLine = (char*)memrchr(_file_ptr, '\n', lineEnd - _file_ptr);
+			size_t size = 0;
 			if (thisLine)
 			{
-				thisLine += 1;
+				size = _cur_ptr - thisLine++;
 			}
 			else
 			{
 				thisLine = _file_ptr;
+				size = _cur_ptr - thisLine;
 			}
 			
-			v.assign(thisLine, _cur_ptr - thisLine);
+			v.assign(thisLine, size);
 			_cur_ptr = thisLine;
 			
 			return PASS_DOWNSTREAM;
@@ -240,7 +277,9 @@ protected:
 		char* ptr = nullptr;
 		if (-1 != getline(&ptr, &size, stdin))
 		{
-			v.assign(ptr, size);
+			// skip the trailing newline
+			v.assign(ptr, size - 1);
+			
 			_lines.push_back(ptr);
 			return PASS_DOWNSTREAM;
 		}
@@ -294,7 +333,8 @@ private:
 		view v;
 		while ((ptr = nullptr) || -1 != getline(&ptr, &size, stdin))
 		{
-			v.assign(ptr, size);
+			// skip the trailing newline
+			v.assign(ptr, size - 1);
 			_lines.push_front(ptr);
 		}
 	}

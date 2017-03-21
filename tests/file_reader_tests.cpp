@@ -32,7 +32,7 @@ TEST_F(file_reader_tests, reads_a_file_with_one_line_only)
 
 	run_pipeline();
 	
-	result expected = {"hello world\n"}; 
+	result expected = {"hello world"}; 
 	EXPECT_EQ(expected, sink.result());
 	
 }
@@ -44,7 +44,7 @@ TEST_F(file_reader_tests, reads_multiple_lines)
 
 	run_pipeline();
 	
-	result expected = {"hello world\n", "how are you\n"}; 
+	result expected = {"hello world", "how are you"}; 
 	EXPECT_EQ(expected, sink.result());
 	
 }

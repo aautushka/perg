@@ -15,6 +15,7 @@ int main(int argc, char* argv[])
 	const char* searchMask = "";
 	bool reverse = false;
 	int lines = 1000;
+	char separator = '\n';
 
 	struct option opts[] = {
 		{ "help",      no_argument,       0, 'h'},
@@ -39,7 +40,7 @@ int main(int argc, char* argv[])
 					"--mask,m         search mask (*? are allowed\n"
 					"--max_lines,l    max result lines, default is 1000\n"
 					"--scan_tail,r    read file backwards\n"
-					"--separator,s    found lines separator\n";
+					"--separator,s    line separator (newline is the default)\n";
 				return 0;
 			case 'f':
 				filename = optarg;
@@ -53,7 +54,9 @@ int main(int argc, char* argv[])
 			case 'l':
 				lines = std::min(1000, atoi(optarg));
 				break;
-				
+			case 's':
+				separator = optarg[0];
+				break;
 			default:
 				std::cout << "Invalid argument: " << (char)c << std::endl;
 				return 1;
@@ -62,8 +65,10 @@ int main(int argc, char* argv[])
 
 	perg::pipeline<perg::view> pipeline;
 	perg::filters::mask_filter mask(searchMask);
+
 	perg::search_result result;
 	result.limit(lines);
+	result.separate_by(separator);
 	
 	if (*filename)
 	{
