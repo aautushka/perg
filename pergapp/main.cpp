@@ -83,9 +83,18 @@ int main(int argc, char* argv[])
 	}
 	else
 	{
-		perg::stdin_reader source;
-		pipeline.connect(source)(mask)(result);
-		pipeline.wait();
+		if (reverse)
+		{
+			perg::reverse_stdin_reader source;
+			pipeline.connect(source)(mask)(result);
+			pipeline.wait();
+		}
+		else
+		{
+			perg::stdin_reader source;
+			pipeline.connect(source)(mask)(result);
+			pipeline.wait();
+		}
 	} 
 
 	perg::stdout_stream stream;

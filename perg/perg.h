@@ -251,6 +251,56 @@ private:
 	list<char*> _lines;
 };
 
+class reverse_stdin_reader : public source<view>
+{
+public:
+	reverse_stdin_reader()
+		: _done_reading_input(false) 
+	{
+	}
+
+	~reverse_stdin_reader()
+	{
+		while (!_lines.empty())
+		{
+			char* line = _lines.pop_back();
+			free(line);
+		}
+	}
+	
+protected:
+	virtual action process(view& v)
+	{
+		if (!_done_reading_input)
+		{
+			accumulate_input();
+			_done_reading_input = true;
+		}
+		if (!_lines.empty())
+		{
+			v = _lines.pop_front();
+			return PASS_DOWNSTREAM;
+		}
+
+		return TERMINATE;
+	}
+
+private:
+	void accumulate_input()
+	{
+		size_t size = 0;
+		char* ptr = nullptr;
+		view v;
+		while ((ptr = nullptr) || -1 != getline(&ptr, &size, stdin))
+		{
+			v.assign(ptr, size);
+			_lines.push_front(ptr);
+		}
+	}
+	
+	list<char*> _lines;
+	bool _done_reading_input;
+};
 } //namespace perg
 
 
