@@ -14,6 +14,7 @@ public:
 	channel()
 	{
 		_active = true;
+		_queue.limit(5000);
 	}
 
 	void write(T t)
