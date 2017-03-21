@@ -27,19 +27,22 @@ private:
 
 	bool process_one()
 	{
-		T t;
+		list<T> tt = _input->read();
 
-		if (_input->try_read(t))
+		for (T t : tt)
 		{
 			action act = this->process(t);
 			if (act == PASS_DOWNSTREAM)
 			{
 				_output.write(t);
 			}
-			return act !=  TERMINATE;
+			else if (act == TERMINATE)
+			{
+				return false;
+			}
 		}
 
-		return false;
+		return !tt.empty();
 	}
 
 	void process_remaining()

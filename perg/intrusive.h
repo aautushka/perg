@@ -6,14 +6,30 @@ template <typename T>
 class intrusive_list
 {
 public:
+	using self_type = intrusive_list<T>;
+
 	intrusive_list()
 		: head(nullptr)
 		, tail(nullptr)
 	{
 	}
 
-	intrusive_list(const intrusive_list<T>&) = delete;
-	intrusive_list<T>& operator =(const intrusive_list<T>&) = delete;
+	intrusive_list(const self_type&) = delete;
+	self_type& operator =(const self_type&) = delete;
+
+
+	intrusive_list(self_type&& other)
+	{
+		*this = std::move(other);
+	}
+
+	self_type& operator =(self_type&& other)
+	{
+		head = other.head;
+		tail = other.tail;
+		other.head = other.tail = nullptr;
+		return *this;
+	}	
 
 	struct node
 	{
@@ -190,6 +206,18 @@ public:
 
 	list(const list<T>&) = delete;
 	list<T>& operator =(const list<T>&) = delete;
+
+	list(list<T>&& other)
+		: _list(std::move(other._list))
+	{
+	}
+
+	list<T>& operator =(list<T>&& other) 
+	{
+		clear();
+		_list = std::move(other._list);
+		return *this;
+	}
 
 	void push_back(T t)
 	{

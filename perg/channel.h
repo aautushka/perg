@@ -21,8 +21,9 @@ public:
 		_queue.push(t);
 	}
 
-	T read()
+	perg::list<T> read()
 	{
+		return _queue.pop_all();
 	}
 
 	bool try_read(T& t)

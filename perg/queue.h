@@ -40,6 +40,16 @@ public:
 		return false;
 	}
 
+	perg::list<T> pop_all()
+	{
+		perg::list<T> out;
+		{
+			std::lock_guard<std::mutex> lock(_mutex);
+			out = std::move(_data);
+		}
+		return std::move(out);
+	}
+
 private:
 	perg::list<T> _data;
 	std::mutex _mutex;

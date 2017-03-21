@@ -28,19 +28,19 @@ private:
 	// returns false to terminate immediately
 	bool process_one()
 	{
-		T t;
+		list<T> tt = _input->read();
 
-		if (_input->try_read(t))
+		for (T t : tt)
 		{
-			if (TERMINATE != this->process(t))
+			if (TERMINATE == this->process(t))
 			{
-				return true;
+				_input->close();
+				return false;
 			}
 
-			_input->close();
 		}
 
-		return false;	
+		return !tt.empty();	
 	}
 
 	bool process_remaining()
