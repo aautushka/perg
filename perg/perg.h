@@ -39,6 +39,7 @@ protected:
 			_buffer.copy(v.data(), v.size());
 			return UNDECIDED;
 		}
+
 		return TERMINATE;
 	}
 

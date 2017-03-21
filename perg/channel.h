@@ -14,12 +14,17 @@ public:
 	channel()
 	{
 		_active = true;
-		_queue.limit(5000);
+	//	_queue.limit(5000);
 	}
 
 	void write(T t)
 	{
 		_queue.push(t);
+	}
+
+	void write(list<T>&& tt)
+	{
+		_queue.push(std::move(tt));
 	}
 
 	perg::list<T> read()

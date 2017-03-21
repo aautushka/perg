@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
 #include "channel.h"
 #include "stage.h"
 
@@ -17,16 +18,25 @@ private:
 	void run()
 	{
 		T t;
+		list<T> buffer;
+		size_t processed = 0;
+
 		action act = UNDECIDED; 
-		while (act != TERMINATE)
+		while (act != TERMINATE && _channel.active())
 		{
 			act = this->process(t);
 			if (act == PASS_DOWNSTREAM)
 			{
-				_channel.write(t);
+				buffer.push_back(t);
+
+				if (++processed % 100 == 0)
+				{
+					_channel.write(std::move(buffer));		
+				}
 			}
 		}
 
+		_channel.write(std::move(buffer));		
 		_channel.close();
 	}
 

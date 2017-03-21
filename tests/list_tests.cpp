@@ -96,3 +96,46 @@ TEST_F(list_tests, clears_list)
 	EXPECT_TRUE(list.empty());
 }
 
+TEST_F(list_tests, concats_lists)
+{
+	list.push_back(123);
+
+	mylist other;
+	other.push_back(456);
+
+	list.push_back(std::move(other));
+	EXPECT_EQ(2, list.size());
+}
+
+TEST_F(list_tests, concats_long_lists)
+{
+	list.push_back(12);
+	list.push_back(34);
+	ASSERT_EQ(2, list.size());
+
+	mylist other;
+	other.push_back(56);
+	other.push_back(78);
+	ASSERT_EQ(2, list.size());
+
+	list.push_back(std::move(other));
+	EXPECT_EQ(4, list.size());
+}
+
+TEST_F(list_tests, initializes_list)
+{
+	mylist other;
+	other.push_back(456);
+
+	list.push_back(std::move(other));
+	EXPECT_EQ(1, list.size());
+}
+
+TEST_F(list_tests, appends_empty_list)
+{
+	mylist other;
+
+	list.push_back(123);
+	list.push_back(std::move(other));
+	EXPECT_EQ(1, list.size());
+}

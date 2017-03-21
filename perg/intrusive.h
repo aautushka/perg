@@ -94,6 +94,22 @@ public:
 		}
 	}	
 
+	void push_back(self_type&& ll)
+	{
+		if (!head)
+		{
+			*this = std::move(ll);
+		}
+		else if (ll.head)
+		{
+			tail->next = ll.head;
+			ll.head->prev = tail;
+			tail = ll.tail;
+
+			ll.head = ll.tail = nullptr;
+		}
+	}
+
 	node& pop_back()
 	{
 		assert(tail != nullptr);
@@ -229,6 +245,11 @@ public:
 	{
 		node_t* node = new node_t(std::move(t));
 		_list.push_front(*node);
+	}
+
+	void push_back(list<T>&& tt)
+	{
+		_list.push_back(std::move(tt._list));
 	}
 
 	bool empty() const

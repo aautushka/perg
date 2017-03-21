@@ -105,7 +105,17 @@ class console : public perg::sink<T>
 protected:
 	virtual action process(T& t)
 	{
-		std::cout << t << std::endl;
+		fwrite(t.data(), sizeof(char), t.size(), stdout);
+		return UNDECIDED;
+	}
+};
+
+template <typename T>
+class null : public perg::sink<T>
+{
+protected:
+	virtual action process(T& t)
+	{
 		return UNDECIDED;
 	}
 };

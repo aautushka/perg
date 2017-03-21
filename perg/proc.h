@@ -16,38 +16,43 @@ public:
 private:
 	void run()
 	{
-		while (_input->active()) 
+		while (_input->active() && _output.active()) 
 		{
-			process_one();
+			if (TERMINATE == process_one())
+			{
+				break;
+			}
 		}
 
 		process_remaining();
 		_output.close();
+		_input->close();
 	}
 
-	bool process_one()
+	action process_one()
 	{
 		list<T> tt = _input->read();
+		action act = UNDECIDED;
 
 		for (T t : tt)
 		{
-			action act = this->process(t);
+			act = this->process(t);
 			if (act == PASS_DOWNSTREAM)
 			{
 				_output.write(t);
 			}
 			else if (act == TERMINATE)
 			{
-				return false;
+				break;
 			}
 		}
 
-		return !tt.empty();
+		return act;
 	}
 
 	void process_remaining()
 	{
-		while (process_one());
+		process_one();
 	}
 
 	bool connected()

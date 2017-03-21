@@ -36,6 +36,22 @@ public:
 		}
 	}
 
+
+	void push(list<T>&& tt)
+	{
+
+		std::unique_lock<std::mutex> lock(_mutex);
+		if (_size  < _limit)
+		{
+			_push_back(std::move(tt));
+		}			
+		else
+		{
+			_size_changed.wait(lock, [this]{return this->_has_enough_space();});
+			_push_back(std::move(tt));
+		}
+	}
+
 	T pop()
 	{
 		T t;
@@ -85,6 +101,7 @@ public:
 private:
 	void _push_back(T t) {_data.push_back(t); ++_size; }
 	bool _has_enough_space() { return _size < _limit; }
+	void _push_back(list<T>&& tt) { _size += tt.size(); _data.push_back(std::move(tt)); }
 
 	void _notify_blocked_thread(size_t prevSize) 
 	{

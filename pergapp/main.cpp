@@ -63,7 +63,6 @@ int main(int argc, char* argv[])
 	perg::pipeline<perg::view> pipeline;
 	perg::filters::mask_filter mask(searchMask);
 	perg::search_result result;
-
 	result.limit(lines);
 	
 	if (*filename)
