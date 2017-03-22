@@ -9,7 +9,8 @@ C++14 is required.
 
 ## Installation
 
-```git clone https://github.com/aautushka/perg
+```
+git clone https://github.com/aautushka/perg
 mkdir perg/build
 cd perg/build && cmake .. && make all
 ```
