@@ -25,12 +25,12 @@ TEST_F(pipeline_test, calls_proc_to_filter_even_numbers)
 {
 	test_source source = {1, 2, 3, 4, 5};
 
-	auto filter = perg::make_filter<int>([](int& i) { 
+	auto filter = perg::filters::make_filter<int>([](int& i) { 
 			return i % 2 ? perg::PASS_DOWNSTREAM : perg::FILTER_OUT;});
 
 	test_sink sink; 
 
-	pipeline.connect(source)(*filter)(sink);
+	pipeline.connect(source)(filter)(sink);
 	pipeline.wait();
 
 	std::vector<int> expected = {1, 3, 5};

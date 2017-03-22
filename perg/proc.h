@@ -12,6 +12,20 @@ class proc : public stage<T>
 {
 public:
 	virtual ~proc() {}
+	proc(){ }
+
+	proc(proc&& other)
+	{
+		*this = std::move(other);
+	}
+
+	proc& operator =(proc&& other)
+	{
+		_output = std::move(other._output);
+		_input = other._input;
+		other._input = nullptr;
+		return *this;
+	}
 
 private:
 	void run()
@@ -66,19 +80,6 @@ private:
 	template <typename U> friend class pipeline;
 };
 
-template <typename T, typename Func> 
-std::unique_ptr<proc<T>> make_filter(Func func)
-{
-	struct proc_type : public proc<T>
-	{
-		proc_type(Func func) : func(func) {}
-		virtual action process(T& t) {return func(t);}
-		Func func;
-	};
-
-	auto ptr = new proc_type(func);
-	return std::unique_ptr<proc<T>>(ptr);
-};
 
 namespace filters
 {
@@ -96,6 +97,24 @@ protected:
 	virtual action process(T& t) { return FILTER_OUT; }
 };
 
+template <typename T, typename Func>
+class filter : public proc<T>
+{
+public:
+	explicit filter(Func func) : func(func) {}
+protected:
+	virtual action process(T& t) {return func(t);}
+private:
+	Func func;
+};
+
+template <typename T, typename Func> 
+filter<T, Func> make_filter(Func func)
+{
+
+	filter<T, Func> filter(func);
+	return std::move(filter);
+};
 } // namespace filters
 
 } // namespce perg

@@ -17,6 +17,19 @@ public:
 		_queue.limit(10000);
 	}
 
+	channel(channel&& other)
+	{
+		*this = std::move(other);
+	}
+
+	channel& operator =(channel&& other)
+	{
+		_queue = std::move(other._queue);
+		_active = other._active.load();
+		other._active = false;
+		return *this;
+	}
+
 	void write(T t)
 	{
 		_queue.push(t);

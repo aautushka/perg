@@ -16,6 +16,19 @@ public:
 	{
 	}
 
+	queue(queue&& other)
+	{
+		*this = std::move(other);
+	}
+
+	queue& operator =(queue&& other)
+	{
+		_size = other._size;
+		_limit = other._limit;
+		_data = std::move(other._data);
+		other._size = 0;
+	}
+
 	void limit(size_t num)
 	{
 		std::unique_lock<std::mutex> lock(_mutex);
