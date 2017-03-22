@@ -220,6 +220,14 @@ public:
 	{
 	}
 
+	~list()
+	{
+		while (!empty())
+		{
+			pop_back();
+		}
+	}
+
 	list(const list<T>&) = delete;
 	list<T>& operator =(const list<T>&) = delete;
 
