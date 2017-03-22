@@ -15,7 +15,7 @@ set(SRC
   perg.h
   stage.h
   cyclic_list.h
-  #block_list.h
+  block_list.h
 )
 
 add_library(libperg ${SRC})

@@ -195,8 +195,27 @@ public:
 		typename intrusive_list<T>::node* _cur;
 	};
 
+	class const_iterator
+	{
+	public:
+		const_iterator() : _cur(nullptr) { }
+		explicit const_iterator(const intrusive_list<T>& l) : _cur(l.head) { }
+		bool operator ==(const const_iterator& other) const {return _cur == other._cur; }
+		bool operator !=(const const_iterator& other) const { return !(*this == other); }
+		const T& operator *() {return _cur->data; }
+		const T& operator *() const {return _cur->data;}
+		const_iterator& operator ++() { _cur = _cur->next; return *this; }
+		const_iterator operator ++(int) { const_iterator out(*this); ++(*this); return out;}
+		const T* operator ->() const {return &**this;}
+
+	private:
+		const typename intrusive_list<T>::node* _cur;
+	};
+
 	iterator begin() { return iterator(*this); }
 	iterator end() { return iterator(); }
+	const_iterator begin() const { return const_iterator(*this); }
+	const_iterator end() const { return const_iterator(); }
 
 	
 private:
@@ -312,6 +331,7 @@ public:
 
 
 	using iterator = typename intrusive_list<T>::iterator;
+	using const_iterator = typename intrusive_list<T>::const_iterator;
 
 	iterator begin()
 	{
@@ -319,6 +339,16 @@ public:
 	}
 
 	iterator end()
+	{
+		return _list.end();
+	}
+
+	const_iterator begin() const
+	{
+		return _list.begin();
+	}
+
+	const_iterator end() const
 	{
 		return _list.end();
 	}
