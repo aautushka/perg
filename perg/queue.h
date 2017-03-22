@@ -2,6 +2,7 @@
 
 #include <mutex>
 #include <condition_variable>
+#include <chrono>
 #include "intrusive.h"
 
 namespace perg
@@ -45,7 +46,8 @@ public:
 		}			
 		else
 		{
-			_size_changed.wait(lock, [this]{return this->_has_enough_space();});
+			using namespace std::chrono_literals;
+			_size_changed.wait_for(lock, 100ms, [this]{return this->_has_enough_space();});
 			_push_back(t);
 		}
 	}

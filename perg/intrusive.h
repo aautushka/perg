@@ -222,10 +222,7 @@ public:
 
 	~list()
 	{
-		while (!empty())
-		{
-			pop_back();
-		}
+		clear();
 	}
 
 	list(const list<T>&) = delete;
@@ -270,7 +267,13 @@ public:
 		return _list.size();
 	}
 
-	void clear(){ _list.clear(); }
+	void clear()
+	{ 
+		while (!empty())
+		{
+			pop_back();
+		}
+	}
 
 	T pop_front()
 	{

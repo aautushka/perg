@@ -16,6 +16,7 @@ set(SRC
   file_reader_tests.cpp
   rfile_reader_tests.cpp
   cyclic_list_tests.cpp
+  queue_stress_tests.cpp
 )
 
 add_executable(tests ${SRC})
