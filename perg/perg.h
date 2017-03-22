@@ -260,6 +260,11 @@ private:
 class stdin_reader : public source<view>
 {
 public:
+	explicit stdin_reader(FILE* file = stdin)
+		: _file(file)
+	{
+	}
+
 	~stdin_reader()
 	{
 		while (!_lines.empty())
@@ -274,7 +279,7 @@ protected:
 	{
 		size_t size = 0;
 		char* ptr = nullptr;
-		if (-1 != getline(&ptr, &size, stdin))
+		if (-1 != getline(&ptr, &size, _file))
 		{
 			size = strlen(ptr) - 1;
 			v.assign(ptr, size);
@@ -293,13 +298,15 @@ protected:
 
 private:
 	list<char*> _lines;
+	FILE* _file;
 };
 
 class reverse_stdin_reader : public source<view>
 {
 public:
-	reverse_stdin_reader()
+	reverse_stdin_reader(FILE* file = stdin)
 		: _done_reading_input(false) 
+		, _file(file)
 	{
 	}
 
@@ -339,7 +346,7 @@ private:
 	{
 		size_t size = 0;
 		char* ptr = nullptr;
-		while ((ptr = nullptr, size = 0) || -1 != getline(&ptr, &size, stdin))
+		while ((ptr = nullptr, size = 0) || -1 != getline(&ptr, &size, _file))
 		{
 			_lines.push_front(ptr);
 		}
@@ -349,6 +356,7 @@ private:
 	
 	list<char*> _lines;
 	bool _done_reading_input;
+	FILE* _file;
 };
 } //namespace perg
 
