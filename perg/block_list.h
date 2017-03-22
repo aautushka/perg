@@ -90,8 +90,7 @@ public:
 		T res = std::move(block.pop_back());
 		if (block.empty())
 		{
-			// TODO: performance concern
-			_list.pop_back();
+			_list.erase_back();
 		}
 		return std::move(res);
 	}
@@ -103,8 +102,7 @@ public:
 		T res = std::move(block.pop_front());
 		if (block.empty())
 		{
-			// TODO: performance concern
-			_list.pop_front();
+			_list.erase_front();
 		}
 		return std::move(res);
 	}

@@ -304,7 +304,7 @@ public:
 	{ 
 		while (!empty())
 		{
-			pop_back();
+			erase_back();
 		}
 	}
 
@@ -322,6 +322,18 @@ public:
 		T t = std::move(node.data);
 		delete &node;
 		return std::move(t);
+	}
+
+	void erase_back()
+	{
+		node_t& node = _list.pop_back();
+		delete &node;
+	}
+
+	void erase_front()
+	{
+		node_t& node = _list.pop_front();
+		delete &node;
 	}
 
 	T& back() { return _list.back().data; }
