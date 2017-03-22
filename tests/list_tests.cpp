@@ -1,157 +1,172 @@
 #include <gtest/gtest.h>
 #include "perg/intrusive.h"
+#include "perg/block_list.h"
 
+template <typename T>
 struct list_tests : public ::testing::Test
 {
-	using mylist = perg::list<int>;
+	using mylist = T;
 	mylist list;
 };
 
-TEST_F(list_tests, list_is_empty_once_created)
+typedef ::testing::Types<
+		perg::list<int>,
+		perg::block_list<int, 1>,
+		perg::block_list<int, 2>,
+		perg::block_list<int, 4>,
+		perg::block_list<int, 8>,
+		perg::block_list<int, 16>,
+		perg::block_list<int, 1024>/*,
+		perg::block_list<int, 1024 * 1024>*/ // TODO: this causes SEGFAULT 
+	> TestTypes;
+TYPED_TEST_CASE(list_tests, TestTypes);
+
+
+TYPED_TEST(list_tests, list_is_empty_once_created)
 {
-	EXPECT_TRUE(list.empty());
+	EXPECT_TRUE(this->list.empty());
 }
 
-TEST_F(list_tests, list_is_not_empty)
+TYPED_TEST(list_tests, list_is_not_empty)
 {
-	list.push_back(123);
-	EXPECT_TRUE(!list.empty());
+	this->list.push_back(123);
+	EXPECT_TRUE(!this->list.empty());
 }
 
-TEST_F(list_tests, insert_node_in_empty_list)
+TYPED_TEST(list_tests, insert_node_in_empty_list)
 {
-	list.push_back(123);
-	EXPECT_EQ(123, list.front()); 
+	this->list.push_back(123);
+	EXPECT_EQ(123, this->list.front()); 
 }
 
 
-TEST_F(list_tests, back_points_to_newly_inserted_node)
+TYPED_TEST(list_tests, back_points_to_newly_inserted_node)
 {
-	list.push_back(123);
-	EXPECT_EQ(123, list.back()); 
+	this->list.push_back(123);
+	EXPECT_EQ(123, this->list.back()); 
 }
 
-TEST_F(list_tests, inserts_several_nodes)
+TYPED_TEST(list_tests, inserts_several_nodes)
 {
-	list.push_back(123);
-	list.push_back(456);
-	list.push_back(789);
+	this->list.push_back(123);
+	this->list.push_back(456);
+	this->list.push_back(789);
 
-	EXPECT_EQ(123, list.front()); 
-	EXPECT_EQ(789, list.back());
+	EXPECT_EQ(123, this->list.front()); 
+	EXPECT_EQ(789, this->list.back());
 }
 
-TEST_F(list_tests, count_list_size)
+TYPED_TEST(list_tests, count_list_size)
 {
-	list.push_back(123);
-	list.push_back(456);
+	this->list.push_back(123);
+	this->list.push_back(456);
 
-	EXPECT_EQ(2, list.size());
+	EXPECT_EQ(2, this->list.size());
 }
 
-TEST_F(list_tests, empty_list_has_size_zero)
+TYPED_TEST(list_tests, empty_list_has_size_zero)
 {
-	EXPECT_EQ(0, list.size());
+	EXPECT_EQ(0, this->list.size());
 }
 
-TEST_F(list_tests, empties_list_by_popping_a_node_from_back)
+TYPED_TEST(list_tests, empties_list_by_popping_a_node_from_back)
 {
-	list.push_back(123);
+	this->list.push_back(123);
 
-	list.pop_back();
-	EXPECT_EQ(0, list.size());
+	this->list.pop_back();
+	EXPECT_EQ(0, this->list.size());
 }
 
-TEST_F(list_tests, empties_list_by_poppsing_a_node_from_front)
+TYPED_TEST(list_tests, empties_list_by_poppsing_a_node_from_front)
 {
-	list.push_back(123);
+	this->list.push_back(123);
 
-	list.pop_front();
-	EXPECT_EQ(0, list.size());
+	this->list.pop_front();
+	EXPECT_EQ(0, this->list.size());
 }
 
-TEST_F(list_tests, pops_node_from_front)
+TYPED_TEST(list_tests, pops_node_from_front)
 {
-	list.push_back(123);
-	list.push_back(456);
-	list.pop_front();
+	this->list.push_back(123);
+	this->list.push_back(456);
+	this->list.pop_front();
 
-	EXPECT_EQ(456, list.front());
+	EXPECT_EQ(456, this->list.front());
 }
 
-TEST_F(list_tests, pops_node_from_back)
+TYPED_TEST(list_tests, pops_node_from_back)
 {
-	list.push_back(123);
-	list.push_back(456);
-	list.pop_back();
+	this->list.push_back(123);
+	this->list.push_back(456);
+	this->list.pop_back();
 
-	EXPECT_EQ(123, list.back());
+	EXPECT_EQ(123, this->list.back());
 }
 
-TEST_F(list_tests, clears_list)
+TYPED_TEST(list_tests, clears_list)
 {
-	list.push_back(123);
-	list.clear();
+	this->list.push_back(123);
+	this->list.clear();
 
-	EXPECT_TRUE(list.empty());
+	EXPECT_TRUE(this->list.empty());
 }
 
-TEST_F(list_tests, concats_lists)
+TYPED_TEST(list_tests, concats_lists)
 {
-	list.push_back(123);
+	this->list.push_back(123);
 
-	mylist other;
+	TypeParam other;
 	other.push_back(456);
 
-	list.push_back(std::move(other));
-	EXPECT_EQ(2, list.size());
+	this->list.push_back(std::move(other));
+	EXPECT_EQ(2, this->list.size());
 }
 
-TEST_F(list_tests, concats_long_lists)
+TYPED_TEST(list_tests, concats_long_lists)
 {
-	list.push_back(12);
-	list.push_back(34);
-	ASSERT_EQ(2, list.size());
+	this->list.push_back(12);
+	this->list.push_back(34);
+	ASSERT_EQ(2, this->list.size());
 
-	mylist other;
+	TypeParam other;
 	other.push_back(56);
 	other.push_back(78);
-	ASSERT_EQ(2, list.size());
+	ASSERT_EQ(2, this->list.size());
 
-	list.push_back(std::move(other));
-	EXPECT_EQ(4, list.size());
+	this->list.push_back(std::move(other));
+	EXPECT_EQ(4, this->list.size());
 }
 
-TEST_F(list_tests, initializes_list)
+TYPED_TEST(list_tests, initializes_list)
 {
-	mylist other;
+	TypeParam other;
 	other.push_back(456);
 
-	list.push_back(std::move(other));
-	EXPECT_EQ(1, list.size());
+	this->list.push_back(std::move(other));
+	EXPECT_EQ(1, this->list.size());
 }
 
-TEST_F(list_tests, appends_empty_list)
+TYPED_TEST(list_tests, appends_empty_list)
 {
-	mylist other;
+	TypeParam other;
 
-	list.push_back(123);
-	list.push_back(std::move(other));
-	EXPECT_EQ(1, list.size());
+	this->list.push_back(123);
+	this->list.push_back(std::move(other));
+	EXPECT_EQ(1, this->list.size());
 }
 
-TEST_F(list_tests, creates_element_at_the_back)
+TYPED_TEST(list_tests, creates_element_at_the_back)
 {
-	list.push_back(123);
-	list.emplace_back() = 456;
+	this->list.push_back(123);
+	this->list.emplace_back() = 456;
 
-	EXPECT_EQ(456, list.back()); 
+	EXPECT_EQ(456, this->list.back()); 
 }
 
-TEST_F(list_tests, creates_element_at_the_front)
+TYPED_TEST(list_tests, creates_element_at_the_front)
 {
-	list.push_back(123);
-	list.emplace_front() = 456;
+	this->list.push_back(123);
+	this->list.emplace_front() = 456;
 
-	EXPECT_EQ(456, list.front()); 
+	EXPECT_EQ(456, this->list.front()); 
 }
