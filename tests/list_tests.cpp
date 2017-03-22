@@ -10,14 +10,15 @@ struct list_tests : public ::testing::Test
 };
 
 typedef ::testing::Types<
-		/*perg::list<int>,
+		perg::list<int>,
 		perg::block_list<int, 1>,
 		perg::block_list<int, 2>,
 		perg::block_list<int, 4>,
 		perg::block_list<int, 8>,
 		perg::block_list<int, 16>,
-		perg::block_list<int, 1024>,*/
-		perg::block_list<int, 1024 * 1024> // TODO: this causes SEGFAULT 
+		perg::block_list<int, 1024>,
+		perg::block_list<int, 1024 * 1024>,
+		perg::block_list<int, 4 * 1024 * 1024>
 	> TestTypes;
 TYPED_TEST_CASE(list_tests, TestTypes);
 
