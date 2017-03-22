@@ -14,6 +14,7 @@ set(SRC
   buffer.h
   perg.h
   stage.h
+  cyclic_list.h
 )
 
 add_library(libperg ${SRC})
