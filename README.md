@@ -1,6 +1,10 @@
 ## Synopsis
 
-At the top of the file there should be a short introduction and/ or overview that explains **what** the project is. This description should match descriptions added for package managers (Gemspec, package.json, etc.)
+PERG is a tiny grep-like utility capable of doing but a tiny subset of what we're used to with grep.
+
+Compiles with GCC 6.2.1.
+
+C++14 is required.
 
 ## Code Example
 
