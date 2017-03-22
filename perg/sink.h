@@ -28,7 +28,7 @@ private:
 	// returns false to terminate immediately
 	bool process_one()
 	{
-		list<T> tt = _input->read();
+		auto tt = _input->read();
 
 		for (T t : tt)
 		{

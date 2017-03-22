@@ -4,6 +4,7 @@
 #include <condition_variable>
 #include <chrono>
 #include "intrusive.h"
+#include "block_list.h"
 
 namespace perg
 {
@@ -16,6 +17,7 @@ template <typename T>
 class queue
 {
 public:
+	// using batch_t = block_list<T, 512>;
 	using batch_t = list<T>;
 
 	explicit queue(size_t limit = std::numeric_limits<size_t>::max())

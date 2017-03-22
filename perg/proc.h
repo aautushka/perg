@@ -45,7 +45,7 @@ private:
 
 	action process_one()
 	{
-		list<T> tt = _input->read();
+		auto tt = _input->read();
 		action act = UNDECIDED;
 
 		for (T t : tt)

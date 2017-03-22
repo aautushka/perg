@@ -17,8 +17,9 @@ public:
 private:
 	void run()
 	{
+		using batch_t = typename channel<T>::batch_t;
 		T t;
-		list<T> buffer;
+		batch_t buffer;
 		size_t processed = 0;
 
 		action act = UNDECIDED; 
