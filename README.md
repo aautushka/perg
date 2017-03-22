@@ -2,34 +2,18 @@
 
 PERG is a tiny grep-like utility capable of doing but a tiny subset of what we're used to with grep.
 
-Compiles with GCC 6.2.1.
+Compiles with GCC 6.2.1/Arch Linux
+Compiles with AppleClang 8.0.0/Mac OS Sierra (v10.12)
 
 C++14 is required.
 
-## Code Example
-
-Show what the library does as concisely as possible, developers should be able to figure out **how** your project solves their problem by looking at the code example. Make sure the API you are showing off is obvious, and that your code is short and concise.
-
-## Motivation
-
-A short description of the motivation behind the creation and maintenance of the project. This should explain **why** the project exists.
-
 ## Installation
 
-Provide code examples and explanations of how to get the project.
-
-## API Reference
-
-Depending on the size of the project, if it is small and simple enough the reference docs can be added to the README. For medium size to larger projects it is important to at least provide a link to where the API reference docs live.
+git clone https://github.com/aautushka/perg
+mkdir perg/build
+cd perg/build && cmake .. && make all
 
 ## Tests
 
-Describe and show how to run the tests with code examples.
+The project was written with tests in mind. Builds with the Google Test framework.
 
-## Contributors
-
-Let people know how they can dive into the project, include important links to things like issue trackers, irc, twitter accounts if applicable.
-
-## License
-
-A short snippet describing the license (MIT, Apache, etc.)
