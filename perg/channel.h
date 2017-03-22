@@ -12,6 +12,8 @@ template <typename T>
 class channel
 {
 public:
+	using batch_t = typename queue<T>::batch_t;
+
 	channel()
 	{
 		_active = true;
@@ -36,12 +38,12 @@ public:
 		_queue.push(t);
 	}
 
-	void write(list<T>&& tt)
+	void write(batch_t&& tt)
 	{
 		_queue.push(std::move(tt));
 	}
 
-	perg::list<T> read()
+	batch_t read()
 	{
 		return _queue.pop_all();
 	}

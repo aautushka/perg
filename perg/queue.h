@@ -16,6 +16,8 @@ template <typename T>
 class queue
 {
 public:
+	using batch_t = list<T>;
+
 	explicit queue(size_t limit = std::numeric_limits<size_t>::max())
 		: _size(0)
 		, _limit(limit)
@@ -57,7 +59,7 @@ public:
 	}
 
 
-	void push(list<T>&& tt)
+	void push(batch_t&& tt)
 	{
 
 		std::unique_lock<std::mutex> lock(_mutex);
@@ -98,9 +100,9 @@ public:
 		return false;
 	}
 
-	perg::list<T> pop_all()
+	batch_t pop_all()
 	{
-		perg::list<T> out;
+		batch_t out;
 		{
 			std::unique_lock<std::mutex> lock(_mutex);
 			out = std::move(_data);
@@ -121,7 +123,12 @@ public:
 private:
 	void _push_back(T t) {_data.push_back(t); ++_size; }
 	bool _has_enough_space() { return _size < _limit; }
-	void _push_back(list<T>&& tt) { _size += tt.size(); _data.push_back(std::move(tt)); }
+	
+	void _push_back(batch_t&& tt) 
+	{ 
+		_size += tt.size();
+	       	_data.push_back(std::move(tt)); 
+	}
 
 	void _notify_blocked_thread(size_t prevSize) 
 	{
@@ -133,7 +140,7 @@ private:
 
 	size_t _size;
 	size_t _limit;
-	perg::list<T> _data;
+	batch_t _data;
 	std::mutex _mutex;
 	std::condition_variable _size_changed;
 
