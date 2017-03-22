@@ -8,7 +8,7 @@
 
 #include "perg/mask_filter.h"
 
-std::unique_ptr<perg::prc> create_input(const char* filename, bool reverse)
+std::unique_ptr<perg::source<perg::view>> create_input(const char* filename, bool reverse)
 {
 	if (filename && *filename)
 	{

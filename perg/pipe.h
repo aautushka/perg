@@ -34,12 +34,12 @@ public:
 			return *this;
 		}
 
-		connection& operator()(std::auto_ptr<proc<T>>& p)
+		connection& operator()(std::unique_ptr<proc<T>>& p)
 		{
 			return (*this)(*p);
 		}
 
-		connection& operator()(std::auto_ptr<sink<T>>& s)
+		connection& operator()(std::unique_ptr<sink<T>>& s)
 		{
 			return (*this)(*s);
 		}
@@ -57,6 +57,11 @@ public:
 		run_in_background(input);
 
 		return connection(*this);
+	}
+
+	connection connect(std::unique_ptr<source<T>>& input)
+	{
+		return connect(*input);
 	}
 
 	~pipeline()
