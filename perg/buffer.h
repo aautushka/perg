@@ -5,6 +5,7 @@
 namespace perg
 {
 
+// a generic binary stream interface
 class stream
 {
 public:
@@ -12,6 +13,7 @@ public:
 	virtual void write(const void* data, size_t size) = 0;
 };
 
+// writes data into standard output
 class stdout_stream : public stream
 {
 public:
@@ -21,6 +23,7 @@ public:
 	}
 };
 
+// appends character to std::string, handy for testing
 class string_stream : public perg::stream
 {
 public:
@@ -67,6 +70,8 @@ private:
 	size_t off;
 };
 
+// buffer capable of holding binary data
+// implemented as a list of vectors
 class buffer
 {
 public:

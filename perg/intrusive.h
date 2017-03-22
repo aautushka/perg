@@ -2,6 +2,11 @@
 
 namespace perg
 {
+
+// just a regular doubly linked list
+// does not manage memory
+// relies on calling code for memory managment 
+// interface is inspided std::list
 template <typename T>
 class intrusive_list
 {
@@ -231,6 +236,8 @@ private:
 	node* tail;
 };
 
+// a wrapper acound intrusive_list
+// adds memory managments, allocs list nodes on heap
 template <typename T>
 class list
 {

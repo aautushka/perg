@@ -4,6 +4,10 @@
 
 namespace perg
 {
+
+// the class encapsulates char array
+// no memory managment
+// think of GSL span<T> 
 class view
 {
 public:
@@ -91,6 +95,10 @@ private:
 	size_t _size;
 };
 
+// look for a patter in the given buffer
+// pattern may contain a star char (*) to match any number of random chars
+// a question mark would match any single character 
 bool glob_match(view buffer, view pattern);
+
 std::ostream& operator <<(std::ostream& stream, const view& v);
 } // namespace perg

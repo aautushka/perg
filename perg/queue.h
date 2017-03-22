@@ -8,6 +8,10 @@
 namespace perg
 {
 
+// multithreaded queue used for passing messages between thread
+// in essense it's a list protected by a mutex
+// might have an upper limit
+// when full, block untils the reader thread frees some space
 template <typename T>
 class queue
 {

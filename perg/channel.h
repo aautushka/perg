@@ -7,6 +7,7 @@
 namespace perg
 {
 
+// communication channel used to pass messages between threads
 template <typename T>
 class channel
 {

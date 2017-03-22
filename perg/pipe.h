@@ -10,6 +10,9 @@
 namespace perg
 {
 
+// pipeline passes messages between stages
+// each stage is working in its own thread
+// can't branch for now
 template <typename T>
 class pipeline
 {

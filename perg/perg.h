@@ -13,6 +13,7 @@
 namespace perg
 {
 
+// stupid RAII perf measurement timer
 class metric
 {
 public:
@@ -30,6 +31,7 @@ private:
 	time_t started;
 };
 
+// writes all incoming messages into a binary buffer
 class search_result : public sink<view>
 {
 public:
@@ -81,6 +83,9 @@ private:
 	char _separator;
 };
 
+// reads file line by line, every read line translates to 
+// a message passed downstream to a filter
+// the file is being read in forward direction
 class file_reader : public source<view>
 {
 public:
@@ -165,6 +170,7 @@ private:
 
 };
 
+// need this of Mac OS
 #ifndef __linux__
 inline void* memrchr(const void* ptr, int ch, size_t len)
 {
@@ -175,6 +181,7 @@ inline void* memrchr(const void* ptr, int ch, size_t len)
 }
 #endif
 
+// reads file bacwards, the last line goes first
 class reverse_file_reader : public source<view>
 {
 public:
@@ -257,6 +264,7 @@ private:
 
 };
 
+// reads stdin, and any other FILE* for that matter
 class stdin_reader : public source<view>
 {
 public:
@@ -301,6 +309,7 @@ private:
 	FILE* _file;
 };
 
+// reads stdin backwards
 class reverse_stdin_reader : public source<view>
 {
 public:

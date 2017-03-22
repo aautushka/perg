@@ -5,6 +5,9 @@
 namespace perg
 {
 
+// it's basically a list of vectors akin to std::deque
+// created for better performance
+// we're saving on memory allocations and memory usage
 template <typename T, int N = 1024>
 class block_list
 {

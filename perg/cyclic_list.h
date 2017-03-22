@@ -8,6 +8,7 @@ constexpr bool power_of_two(T t)
 	return t && (!(t & (t - 1)));
 }
 
+// a fixed length list, can hold up to N elements
 template <typename T, int N>
 class cyclic_list
 {
