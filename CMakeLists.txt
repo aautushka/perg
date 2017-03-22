@@ -6,4 +6,4 @@ add_compile_options(-std=gnu++14)
 
 add_subdirectory(perg)
 add_subdirectory(tests)
-add_subdirectory(pergapp)
+add_subdirectory(app)
