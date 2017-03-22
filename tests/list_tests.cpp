@@ -139,3 +139,19 @@ TEST_F(list_tests, appends_empty_list)
 	list.push_back(std::move(other));
 	EXPECT_EQ(1, list.size());
 }
+
+TEST_F(list_tests, creates_element_at_the_back)
+{
+	list.push_back(123);
+	list.emplace_back() = 456;
+
+	EXPECT_EQ(456, list.back()); 
+}
+
+TEST_F(list_tests, creates_element_at_the_front)
+{
+	list.push_back(123);
+	list.emplace_front() = 456;
+
+	EXPECT_EQ(456, list.front()); 
+}

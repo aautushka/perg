@@ -63,7 +63,7 @@ public:
 		res += (head == nullptr ? 0 : 1);
 		return res;
 	}
-	
+
 	void push_back(node& n)
 	{
 		if (empty())
@@ -250,6 +250,20 @@ public:
 	{
 		node_t* node = new node_t(std::move(t));
 		_list.push_front(*node);
+	}
+
+	T& emplace_back()
+	{
+		node_t* node = new node_t;
+		_list.push_back(*node);
+		return node->data;
+	}
+
+	T& emplace_front()
+	{
+		node_t* node = new node_t;
+		_list.push_front(*node);
+		return node->data;
 	}
 
 	void push_back(list<T>&& tt)

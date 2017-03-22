@@ -82,6 +82,26 @@ public:
 		data[head] = std::move(t);
 	}
 
+
+	T& emplace_back()
+	{
+		assert(!full());
+
+		T& res = data[tail];
+		
+		move_tail_forward();
+		return res;
+	}
+
+	T& emplace_front()
+	{
+		assert(!full());
+
+		move_head_backward();
+
+		return data[head];
+	}
+
 	T pop_back()
 	{
 		assert(!empty());

@@ -166,3 +166,19 @@ TEST_F(cyclic_list_test, iterates_over_list)
 	EXPECT_EQ(expected, actual);
 
 }
+
+TEST_F(cyclic_list_test, creates_element_at_the_back)
+{
+	list.push_back(123);
+	list.emplace_back() = 456;
+
+	EXPECT_EQ(456, list.back()); 
+}
+
+TEST_F(cyclic_list_test, creates_element_at_the_front)
+{
+	list.push_back(123);
+	list.emplace_front() = 456;
+
+	EXPECT_EQ(456, list.front()); 
+}
