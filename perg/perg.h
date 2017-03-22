@@ -231,16 +231,15 @@ protected:
 		{
 			char* lineEnd = _cur_ptr[-1] == '\n' ? _cur_ptr - 1 : _cur_ptr;
 			char* thisLine = (char*)memrchr(_file_ptr, '\n', lineEnd - _file_ptr);
-			size_t size = 0;
 			if (thisLine)
 			{
-				size = _cur_ptr - thisLine++;
+				thisLine += 1;
 			}
 			else
 			{
 				thisLine = _file_ptr;
-				size = _cur_ptr - thisLine;
 			}
+			const size_t size = lineEnd - thisLine;
 			
 			v.assign(thisLine, size);
 			_cur_ptr = thisLine;
@@ -277,11 +276,16 @@ protected:
 		char* ptr = nullptr;
 		if (-1 != getline(&ptr, &size, stdin))
 		{
-			// skip the trailing newline
-			v.assign(ptr, size - 1);
+			size = strlen(ptr) - 1;
+			v.assign(ptr, size);
 			
 			_lines.push_back(ptr);
 			return PASS_DOWNSTREAM;
+		}
+		else
+		{
+			// man says to free the buffer even if getline fails
+			free(ptr);
 		}
 
 		return TERMINATE;
@@ -318,7 +322,12 @@ protected:
 		}
 		if (!_lines.empty())
 		{
-			v = _lines.pop_front();
+			char* ptr = _lines.pop_front();
+
+			// remove the trailing newline
+			size_t len = strlen(ptr) - 1;
+			std::cout << strlen(ptr) << std::endl;
+			v.assign(ptr, len);
 			return PASS_DOWNSTREAM;
 		}
 
@@ -330,13 +339,12 @@ private:
 	{
 		size_t size = 0;
 		char* ptr = nullptr;
-		view v;
-		while ((ptr = nullptr) || -1 != getline(&ptr, &size, stdin))
+		while ((ptr = nullptr, size = 0) || -1 != getline(&ptr, &size, stdin))
 		{
-			// skip the trailing newline
-			v.assign(ptr, size - 1);
 			_lines.push_front(ptr);
 		}
+		// man says to free the buffer even when the call fails 
+		free(ptr);
 	}
 	
 	list<char*> _lines;

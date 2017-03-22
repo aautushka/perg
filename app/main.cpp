@@ -34,6 +34,20 @@ std::unique_ptr<perg::source<perg::view>> create_input(const char* filename, boo
 	} 
 }
 
+std::unique_ptr<perg::proc<perg::view>> create_filter(const char* mask)
+{
+	return std::make_unique<perg::filters::mask_filter>(mask);
+}
+
+std::unique_ptr<perg::search_result> create_output(int lines, char separator)
+{
+	auto out = std::make_unique<perg::search_result>();
+	
+	out->limit(lines);
+	out->separate_by(separator);
+	return out;
+}
+
 int main(int argc, char* argv[])
 {
 	int c = 0;
@@ -90,19 +104,16 @@ int main(int argc, char* argv[])
 	}
 
 	perg::pipeline<perg::view> pipeline;
-	perg::filters::mask_filter mask(searchMask);
 
-	perg::search_result result;
-	result.limit(lines);
-	result.separate_by(separator);
+	auto input = create_input(filename, reverse);
+	auto filter = create_filter(searchMask);
+	auto output = create_output(lines, separator);
 
-	auto source = create_input(filename, reverse);
-
-	pipeline.connect(source)(mask)(result);
+	pipeline.connect(input)(filter)(*output);
 	pipeline.wait();
 	
-	perg::stdout_stream stream;
-	result.dump(stream);
+	perg::stdout_stream console;
+	output->dump(console);
 		
 	return 0;
 }

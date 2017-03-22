@@ -59,3 +59,14 @@ TEST_F(file_reader_tests, reads_whole_file_if_there_are_no_newlines)
 	EXPECT_EQ(expected, sink.result());
 	
 }
+
+TEST_F(file_reader_tests, reads_empty_line)
+{
+	file.write("\n");
+
+	run_pipeline();
+	
+	result expected = {""}; 
+	EXPECT_EQ(expected, sink.result());
+	
+}

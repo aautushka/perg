@@ -34,7 +34,7 @@ TEST_F(rfile_reader_tests, reads_a_file_with_one_line_only)
 
 	run_pipeline();
 	
-	result expected = {"hello world\n"}; 
+	result expected = {"hello world"}; 
 	EXPECT_EQ(expected, sink.result());
 	
 }
@@ -46,7 +46,7 @@ TEST_F(rfile_reader_tests, reads_multiple_lines_in_reverse_order)
 
 	run_pipeline();
 	
-	result expected = {"how are you\n", "hello world\n"};
+	result expected = {"how are you", "hello world"};
 	EXPECT_EQ(expected, sink.result());
 	
 }
@@ -58,6 +58,17 @@ TEST_F(rfile_reader_tests, reads_whole_file_if_there_are_no_newlines)
 	run_pipeline();
 	
 	result expected = {"hello world"}; 
+	EXPECT_EQ(expected, sink.result());
+	
+}
+
+TEST_F(rfile_reader_tests, reads_empty_line)
+{
+	file.write("\n");
+
+	run_pipeline();
+	
+	result expected = {""}; 
 	EXPECT_EQ(expected, sink.result());
 	
 }

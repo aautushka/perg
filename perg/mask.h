@@ -45,7 +45,11 @@ public:
 	
 	bool operator ==(const view& other) const
 	{
-		if (!empty() && other._size == _size)
+		if (empty() && other.empty())
+		{
+			return true;
+		}
+		else if (other._size == _size)
 		{
 			return 0 == memcmp(other._ptr, this->_ptr, this->_size); 
 		}
