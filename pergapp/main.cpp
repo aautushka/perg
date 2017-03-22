@@ -8,6 +8,32 @@
 
 #include "perg/mask_filter.h"
 
+std::unique_ptr<perg::prc> create_input(const char* filename, bool reverse)
+{
+	if (filename && *filename)
+	{
+		if (reverse)
+		{
+			return std::make_unique<perg::reverse_file_reader>(filename);
+		}
+		else
+		{
+			return std::make_unique<perg::file_reader>(filename);
+		}
+	}
+	else
+	{
+		if (reverse)
+		{
+			return std::make_unique<perg::reverse_stdin_reader>();
+		}
+		else
+		{
+			return std::make_unique<perg::stdin_reader>();
+		}
+	} 
+}
+
 int main(int argc, char* argv[])
 {
 	int c = 0;
@@ -69,38 +95,12 @@ int main(int argc, char* argv[])
 	perg::search_result result;
 	result.limit(lines);
 	result.separate_by(separator);
-	
-	if (*filename)
-	{
-		if (reverse)
-		{
-			perg::reverse_file_reader file(filename);
-			pipeline.connect(file)(mask)(result);
-			pipeline.wait();
-		}
-		else
-		{
-			perg::file_reader file(filename);
-			pipeline.connect(file)(mask)(result);
-			pipeline.wait();
-		}
-	}
-	else
-	{
-		if (reverse)
-		{
-			perg::reverse_stdin_reader source;
-			pipeline.connect(source)(mask)(result);
-			pipeline.wait();
-		}
-		else
-		{
-			perg::stdin_reader source;
-			pipeline.connect(source)(mask)(result);
-			pipeline.wait();
-		}
-	} 
 
+	auto source = create_input(filename, reverse);
+
+	pipeline.connect(source)(mask)(result);
+	pipeline.wait();
+	
 	perg::stdout_stream stream;
 	result.dump(stream);
 		

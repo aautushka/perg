@@ -28,10 +28,20 @@ public:
 			return *this;
 		}
 
-		connection & operator ()(sink<T>& s)
+		connection& operator ()(sink<T>& s)
 		{
 			_pipe.connect(s);
 			return *this;
+		}
+
+		connection& operator()(std::auto_ptr<proc<T>>& p)
+		{
+			return (*this)(*p);
+		}
+
+		connection& operator()(std::auto_ptr<sink<T>>& s)
+		{
+			return (*this)(*s);
 		}
 
 	private:
