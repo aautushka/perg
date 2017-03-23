@@ -2,16 +2,16 @@
 #include "perg/perg.h"
 #include "temp_file.h"
 
-struct file_reader_tests : public ::testing::Test
+struct line_reader_tests : public ::testing::Test
 {
 	perg::pipeline<perg::view> pipeline;
 	perg::sinks::collector<perg::view> sink;
-	perg::file_reader source;
+	perg::line_reader source;
 	tests::temp_file file;
 
 	using result = std::vector<perg::view>;
 
-	file_reader_tests()
+	line_reader_tests()
 	{
 	}
 
@@ -22,11 +22,11 @@ struct file_reader_tests : public ::testing::Test
 		pipeline.wait();
 	}
 
-	~file_reader_tests()
+	~line_reader_tests()
 	{
 	}
 };
-TEST_F(file_reader_tests, reads_a_file_with_one_line_only)
+TEST_F(line_reader_tests, reads_a_file_with_one_line_only)
 {
 	file.write_line("hello world");
 
@@ -37,7 +37,7 @@ TEST_F(file_reader_tests, reads_a_file_with_one_line_only)
 	
 }
 
-TEST_F(file_reader_tests, reads_multiple_lines)
+TEST_F(line_reader_tests, reads_multiple_lines)
 {
 	file.write_line("hello world");
 	file.write_line("how are you");
@@ -49,7 +49,7 @@ TEST_F(file_reader_tests, reads_multiple_lines)
 	
 }
 
-TEST_F(file_reader_tests, reads_whole_file_if_there_are_no_newlines)
+TEST_F(line_reader_tests, reads_whole_file_if_there_are_no_newlines)
 {
 	file.write("hello world");
 
@@ -60,7 +60,7 @@ TEST_F(file_reader_tests, reads_whole_file_if_there_are_no_newlines)
 	
 }
 
-TEST_F(file_reader_tests, reads_empty_line)
+TEST_F(line_reader_tests, reads_empty_line)
 {
 	file.write("\n");
 

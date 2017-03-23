@@ -14,11 +14,11 @@ std::unique_ptr<perg::source<perg::view>> create_input(const char* filename, boo
 	{
 		if (reverse)
 		{
-			return std::make_unique<perg::reverse_file_reader>(filename);
+			return std::make_unique<perg::reverse_line_reader>(filename);
 		}
 		else
 		{
-			return std::make_unique<perg::file_reader>(filename);
+			return std::make_unique<perg::line_reader>(filename);
 		}
 	}
 	else

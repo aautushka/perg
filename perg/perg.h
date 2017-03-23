@@ -86,10 +86,10 @@ private:
 // reads file line by line, every read line translates to 
 // a message passed downstream to a filter
 // the file is being read in forward direction
-class file_reader : public source<view>
+class line_reader : public source<view>
 {
 public:
-	file_reader()
+	line_reader()
 		: _file_desc(-1)
 		, _file_ptr(nullptr)
 		, _file_end(nullptr)
@@ -98,7 +98,7 @@ public:
 	{
 	}
 
-	explicit file_reader(const char* filename)
+	explicit line_reader(const char* filename)
 		: _file_desc(-1)
 		, _file_ptr(nullptr)
 		, _file_end(nullptr)
@@ -126,7 +126,7 @@ public:
 		}
 	}
 
-	~file_reader()
+	~line_reader()
 	{
 		if (_file_ptr)
 		{
@@ -182,10 +182,10 @@ inline void* memrchr(const void* ptr, int ch, size_t len)
 #endif
 
 // reads file bacwards, the last line goes first
-class reverse_file_reader : public source<view>
+class reverse_line_reader : public source<view>
 {
 public:
-	reverse_file_reader()
+	reverse_line_reader()
 		: _file_desc(-1)
 		, _file_ptr(nullptr)
 		, _file_end(nullptr)
@@ -194,7 +194,7 @@ public:
 	{
 	}
 
-	explicit reverse_file_reader(const char* filename)
+	explicit reverse_line_reader(const char* filename)
 		: _file_desc(-1)
 		, _file_ptr(nullptr)
 		, _file_end(nullptr)
@@ -222,7 +222,7 @@ public:
 		}
 	}
 
-	~reverse_file_reader()
+	~reverse_line_reader()
 	{
 		if (_file_ptr)
 		{
