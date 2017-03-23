@@ -17,6 +17,11 @@ public:
 	{
 	}
 
+	block_list(std::initializer_list<T> ll)
+	{
+		for (auto l : ll) push_back(l);
+	}
+
 	~block_list()
 	{
 	}
@@ -135,11 +140,78 @@ public:
 	}
 
 
-	class iterator{};
+	class iterator
+	{
+	public:
+		explicit iterator(self_type& parent)
+			: _iter_list(parent._list.begin())
+		{
+			if (_iter_list != parent._list.end())
+			{
+				_iter_block = _iter_list->begin();
+			}
+		}
+
+		iterator()
+		{
+		}
+
+		bool operator ==(const iterator& other) const 
+		{
+			return _iter_list == other._iter_list && _iter_block == _iter_block; 
+		}
+		bool operator !=(const iterator& other) const 
+		{
+			return !(*this == other); 
+		}
+		T& operator *() {return *_iter_block;}
+		const T& operator *() const {return *_iter_block;}
+		iterator& operator ++() 
+		{ 
+			static const list_iterator end_list;
+			static const block_iterator end_block;
+			bool newList = false;
+			while (_iter_list != end_list)
+			{
+				if (newList)
+				{
+					_iter_block = _iter_list->begin();	
+				}
+				else
+				{
+					++_iter_block;
+				}
+
+				if (_iter_block != end_block)
+				{
+					break;	
+				}
+				else
+				{
+					++_iter_list;
+					newList = true;
+				}
+			}
+			return *this;
+		}
+		iterator operator ++(int) 
+		{ 
+			iterator out(*this); ++(*this); return out;
+		}
+		const T* operator ->() const {return &**this;}
+		T* operator ->() {return &**this;}
+
+	private:
+		using list_iterator = typename self_type::list_t::iterator;
+		using block_iterator = typename self_type::block_t::iterator;
+
+		list_iterator _iter_list;
+		block_iterator _iter_block; 
+	};
 
 	iterator begin()
 	{
-		return iterator();
+		return iterator(*this);
 	}
 
 	iterator end()

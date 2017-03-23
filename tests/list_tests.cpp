@@ -171,3 +171,17 @@ TYPED_TEST(list_tests, creates_element_at_the_front)
 
 	EXPECT_EQ(456, this->list.front()); 
 }
+
+TYPED_TEST(list_tests, iterates_over_list)
+{
+	auto data = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+	TypeParam list = data;
+	std::vector<int> expected = data;
+	std::vector<int> actual;
+
+	for (auto i = list.begin(); i != list.end(); ++i) actual.push_back(*i);
+
+	EXPECT_EQ(expected, actual);
+}
+

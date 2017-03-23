@@ -246,6 +246,11 @@ public:
 	{
 	}
 
+	list(std::initializer_list<T> ll)
+	{
+		for (auto l : ll) push_back(l);
+	}
+
 	~list()
 	{
 		clear();
