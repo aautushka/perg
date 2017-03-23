@@ -83,32 +83,28 @@ private:
 	char _separator;
 };
 
-// reads file line by line, every read line translates to 
-// a message passed downstream to a filter
-// the file is being read in forward direction
-class line_reader : public source<view>
+class file_mapping
 {
 public:
-	line_reader()
+	file_mapping()
 		: _file_desc(-1)
 		, _file_ptr(nullptr)
-		, _file_end(nullptr)
-		, _cur_ptr(nullptr)
 		, _file_size(0)
 	{
 	}
 
-	explicit line_reader(const char* filename)
+	explicit file_mapping(const char* filename)
 		: _file_desc(-1)
 		, _file_ptr(nullptr)
-		, _file_end(nullptr)
-		, _cur_ptr(nullptr)
 		, _file_size(0)
 	{
 		open(filename);
 	}
+	
+	file_mapping(const file_mapping&) = delete;
+	file_mapping& operator =(const file_mapping&) = delete;
 
-	void open(const char* filename)
+	bool open(const char* filename)
 	{
 		assert(_file_desc == -1);
 		int _file_desc = ::open(filename, O_RDONLY);
@@ -120,18 +116,59 @@ public:
 			{
 				_file_size = sb.st_size;
 				_file_ptr = (char*)mmap(0, _file_size, PROT_READ, MAP_PRIVATE, _file_desc, 0);
-				_file_end = _file_ptr + _file_size;
-				_cur_ptr = _file_ptr;
+				return true;
 			}
 		}
+		return false;
 	}
 
-	~line_reader()
+	~file_mapping()
 	{
 		if (_file_ptr)
 		{
 			close(_file_desc);
 			munmap(_file_ptr, _file_size);
+		}
+	}
+
+	size_t size() const { return _file_size; }
+	char* data() const { return _file_ptr; }
+private:
+	int _file_desc;
+	char* _file_ptr;
+	size_t _file_size;
+
+};
+
+
+
+// reads file line by line, every read line translates to 
+// a message passed downstream to a filter
+// the file is being read in forward direction
+class line_reader : public source<view>
+{
+public:
+	line_reader()
+		: _file_ptr(nullptr)
+		, _file_end(nullptr)
+		, _cur_ptr(nullptr)
+	{
+	}
+
+	explicit line_reader(const char* filename)
+		: _file_ptr(nullptr)
+		, _file_end(nullptr)
+		, _cur_ptr(nullptr)
+	{
+		open(filename);
+	}
+
+	void open(const char* filename)
+	{
+		if (_mapping.open(filename))
+		{
+			_cur_ptr = _file_ptr = _mapping.data();
+			_file_end = _cur_ptr + _mapping.size();
 		}
 	}
 
@@ -161,12 +198,12 @@ protected:
 		}
 		return TERMINATE;
 	}
+
 private:
-	int _file_desc;
+	file_mapping _mapping;
 	char* _file_ptr;
 	char* _file_end;
 	char* _cur_ptr;
-	size_t _file_size;
 
 };
 
@@ -186,48 +223,27 @@ class reverse_line_reader : public source<view>
 {
 public:
 	reverse_line_reader()
-		: _file_desc(-1)
-		, _file_ptr(nullptr)
+		: _file_ptr(nullptr)
 		, _file_end(nullptr)
 		, _cur_ptr(nullptr)
-		, _file_size(0)
 	{
 	}
 
 	explicit reverse_line_reader(const char* filename)
-		: _file_desc(-1)
-		, _file_ptr(nullptr)
+		: _file_ptr(nullptr)
 		, _file_end(nullptr)
 		, _cur_ptr(nullptr)
-		, _file_size(0)
 	{
 		open(filename);
 	}
 
 	void open(const char* filename)
 	{
-		assert(_file_desc == -1);
-		int _file_desc = ::open(filename, O_RDONLY);
-		if (_file_desc != -1)
+		if (_mapping.open(filename))
 		{
-			struct stat sb;
-
-			if (fstat(_file_desc, &sb) != -1)
-			{
-				_file_size = sb.st_size;
-				_file_ptr = (char*)mmap(0, _file_size, PROT_READ, MAP_SHARED, _file_desc, 0);
-				_file_end = _file_ptr + _file_size;
-				_cur_ptr = _file_end;
-			}
-		}
-	}
-
-	~reverse_line_reader()
-	{
-		if (_file_ptr)
-		{
-			close(_file_desc);
-			munmap(_file_ptr, _file_size);
+			_file_ptr = _mapping.data();
+			_file_end = _file_ptr + _mapping.size();
+			_cur_ptr = _file_end;
 		}
 	}
 
@@ -256,11 +272,10 @@ protected:
 		return TERMINATE;
 	}
 private:
-	int _file_desc;
+	file_mapping _mapping;
 	char* _file_ptr;
 	char* _file_end;
 	char* _cur_ptr;
-	size_t _file_size;
 
 };
 
@@ -366,6 +381,53 @@ private:
 	list<char*> _lines;
 	bool _done_reading_input;
 	FILE* _file;
+};
+
+// maps the file add passes the pointer downstream,
+// so the downstream filter takes care of it parsing it processing it
+class raw_file_reader : public source<view>
+{
+public:
+	raw_file_reader()
+		: _cur_ptr(nullptr)
+		, _size(0)
+	{
+	}
+
+	explicit raw_file_reader(const char* filename)
+		: _cur_ptr(nullptr)
+		, _size(0)
+	{
+		open(filename);
+	}
+
+	void open(const char* filename)
+	{
+		if (_mapping.open(filename))
+		{
+			_cur_ptr = _mapping.data();
+			_size = _mapping.size();
+		}
+	}
+
+protected:
+	virtual action process(view& v)
+	{
+		if (_cur_ptr)
+		{
+			v.assign(_cur_ptr, _size);
+			_cur_ptr = nullptr;
+			_size = 0;
+
+			return PASS_DOWNSTREAM;
+		}
+		return TERMINATE;
+	}
+
+private:
+	file_mapping _mapping;
+	char* _cur_ptr;
+	size_t _size;
 };
 } //namespace perg
 
