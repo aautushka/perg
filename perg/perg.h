@@ -207,16 +207,6 @@ private:
 
 };
 
-// need this of Mac OS
-#ifndef __linux__
-inline void* memrchr(const void* ptr, int ch, size_t len)
-{
-	if (!len) return nullptr;
-	const unsigned char* p = (const unsigned char*)ptr + len - 1;
-	while (*p != ch && p-- != ptr);
-	return p >= ptr ? (void*)p : nullptr;
-}
-#endif
 
 // reads file bacwards, the last line goes first
 class reverse_line_reader : public source<view>

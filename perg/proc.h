@@ -133,6 +133,17 @@ filter<T, Func> make_filter(Func func)
 	return std::move(filter);
 };
 } // namespace filters
+ 
+// need this of Mac OS
+#ifndef __linux__
+inline void* memrchr(const void* ptr, int ch, size_t len)
+{
+	if (!len) return nullptr;
+	const unsigned char* p = (const unsigned char*)ptr + len - 1;
+	while (*p != ch && p-- != ptr);
+	return p >= ptr ? (void*)p : nullptr;
+}
+#endif
 
 } // namespce perg
 
