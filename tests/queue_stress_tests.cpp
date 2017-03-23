@@ -28,7 +28,7 @@ struct stress_test
 	{
 		reader = std::thread([&]{
 			while (expected.size() < LENGTH) {
-				perg::list<int> ll = queue.pop_all();
+				auto ll = queue.pop_all();
 				for (int i : ll)
 				{
 					expected.push_back(i);	
