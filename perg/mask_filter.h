@@ -33,6 +33,7 @@ struct forward_mask_filter : public perg::proc<perg::view>
 public:
 	explicit forward_mask_filter(const char* mask)
 		: _mask(mask)
+		, _hint(get_hint_from_mask(mask))
 		, _ptr(nullptr)
 	{
 	}
@@ -48,9 +49,9 @@ protected:
 		}
 
 		const char* end = v.data() + v.size();
-		if (_ptr < end)
+		while (_ptr < end)
 		{
-			const char* found = (const char*)memmem(_ptr, end - _ptr, _mask.data(), _mask.size());	
+			const char* found = (const char*)memmem(_ptr, end - _ptr, _hint.data(), _hint.size());	
 			if (found)
 			{
 				const char* beg = v.data();
@@ -60,9 +61,19 @@ protected:
 
 				const char* prevline = (const char*)memrchr(beg, '\n', found - beg);
 				prevline = prevline ? prevline + 1 : beg;
-				v.assign(prevline, nextline - prevline);
+				
+				view line(prevline, nextline - prevline);
 				_ptr = nextline + 1;
-				return PASS_DOWNSTREAM_AND_REPEAT; 
+
+				if (glob_match(line, _mask))
+				{
+					v = line;
+					return PASS_DOWNSTREAM_AND_REPEAT; 
+				}
+			}
+			else
+			{
+				break;
 			}
 		}
 		return FILTER_OUT;
@@ -71,6 +82,7 @@ protected:
 private:
 	view _mask;
 	view _prev;
+	view _hint;
 	const char* _ptr;
 
 };
@@ -114,6 +126,7 @@ public:
 	explicit backward_mask_filter(const char* mask)
 		: _mask(mask)
 		, _ptr(nullptr)
+		, _hint(get_hint_from_mask(mask))
 	{
 	}
 
@@ -128,9 +141,9 @@ protected:
 
 		const char* beg = v.data();
 		const char* end = v.data() + v.size();
-		if (_ptr > beg)
+		while (_ptr > beg)
 		{
-			const char* found = (const char*)memrmem(beg, _ptr - beg, _mask.data(), _mask.size());	
+			const char* found = (const char*)memrmem(beg, _ptr - beg, _hint.data(), _hint.size());	
 			if (found)
 			{
 				const char* nextline = (const char*)memchr(found, '\n', end - found);		
@@ -138,9 +151,18 @@ protected:
 
 				const char* prevline = (const char*)memrchr(beg, '\n', found - beg);
 				prevline = prevline ? prevline + 1 : beg;
-				v.assign(prevline, nextline - prevline);
+				view line(prevline, nextline - prevline);
 				_ptr = prevline - 1;
-				return PASS_DOWNSTREAM_AND_REPEAT; 
+
+				if (glob_match(line, _mask))
+				{
+					v = line;
+					return PASS_DOWNSTREAM_AND_REPEAT; 
+				}
+			}
+			else
+			{
+				break;
 			}
 		}
 		return FILTER_OUT;
@@ -149,6 +171,7 @@ protected:
 private:
 	view _mask;
 	view _prev;
+	view _hint;
 	const char* _ptr;
 
 };

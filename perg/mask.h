@@ -95,10 +95,99 @@ private:
 	size_t _size;
 };
 
+enum glob_state
+{
+	UNKNOWN = 0,
+	STAR,
+	QUESTION,
+	TEXT	
+};
+
+class glob_pattern
+{
+public:
+
+	explicit glob_pattern(view pattern)
+		: _pattern(pattern)
+		, _pos(0)
+		, _current_state(UNKNOWN)
+	{
+	}
+
+	glob_state walk()
+	{
+		_current_state = UNKNOWN;
+		while (more())
+		{
+			const char ch = get();
+			switch (ch)
+			{
+			case '*':
+				if (_current_state == UNKNOWN)
+				{
+					_current_state = STAR;
+					_current_chunk.assign(&_pattern[_pos], 1);
+					next();
+				}
+				return _current_state;
+			case '?':
+				if (_current_state == UNKNOWN)
+				{
+					_current_state = QUESTION;
+					_current_chunk.assign(&_pattern[_pos], 1);
+					next();
+				}
+				return _current_state;
+			default: 
+				if (_current_state == TEXT)
+				{
+					_current_chunk.grow();
+				}
+				else
+				{
+					_current_chunk.assign(&_pattern[_pos], 1);
+					_current_state = TEXT; 
+				}
+			}
+			next();
+		}
+		return _current_state;
+	}
+
+	view read()
+	{
+		return _current_chunk;
+	}
+	
+private:
+	bool more()
+	{
+		return _pos < _pattern.size();
+	}
+
+	char get()
+	{
+		return _pattern[_pos];
+	}
+
+	void next()
+	{
+		++_pos;
+	}
+
+	view _pattern;
+
+	size_t _pos;
+	glob_state _current_state;
+	view _current_chunk;
+};
+
 // look for a patter in the given buffer
 // pattern may contain a star char (*) to match any number of random chars
 // a question mark would match any single character 
 bool glob_match(view buffer, view pattern);
+
+view get_hint_from_mask(view mask);
 
 std::ostream& operator <<(std::ostream& stream, const view& v);
 } // namespace perg

@@ -5,93 +5,6 @@
 namespace perg
 {
 
-enum glob_state
-{
-	UNKNOWN = 0,
-	STAR,
-	QUESTION,
-	TEXT	
-};
-
-class glob_pattern
-{
-public:
-
-	explicit glob_pattern(view pattern)
-		: _pattern(pattern)
-		, _pos(0)
-		, _current_state(UNKNOWN)
-	{
-	}
-
-	glob_state walk()
-	{
-		_current_state = UNKNOWN;
-		while (more())
-		{
-			const char ch = get();
-			switch (ch)
-			{
-			case '*':
-				if (_current_state == UNKNOWN)
-				{
-					_current_state = STAR;
-					_current_chunk.assign(&_pattern[_pos], 1);
-					next();
-				}
-				return _current_state;
-			case '?':
-				if (_current_state == UNKNOWN)
-				{
-					_current_state = QUESTION;
-					_current_chunk.assign(&_pattern[_pos], 1);
-					next();
-				}
-				return _current_state;
-			default: 
-				if (_current_state == TEXT)
-				{
-					_current_chunk.grow();
-				}
-				else
-				{
-					_current_chunk.assign(&_pattern[_pos], 1);
-					_current_state = TEXT; 
-				}
-			}
-			next();
-		}
-		return _current_state;
-	}
-
-	view read()
-	{
-		return _current_chunk;
-	}
-	
-private:
-	bool more()
-	{
-		return _pos < _pattern.size();
-	}
-
-	char get()
-	{
-		return _pattern[_pos];
-	}
-
-	void next()
-	{
-		++_pos;
-	}
-
-	view _pattern;
-
-	size_t _pos;
-	glob_state _current_state;
-	view _current_chunk;
-};
-
 class glob_haystack
 {
 public:
@@ -174,6 +87,29 @@ std::ostream& operator <<(std::ostream& stream, const view& v)
 {
 	return stream.write(v.data(), v.size());
 }
+
+view get_hint_from_mask(view mask)
+{
+	view hint;
+	glob_pattern pattern(mask);
+	glob_state state = UNKNOWN;
+	do
+	{
+		auto state = pattern.walk();
+		if (state == TEXT)
+		{
+			view chunk = pattern.read();
+			if (chunk.size() > hint.size())
+			{
+				hint = chunk;
+			}
+		}
+	}
+	while (state != UNKNOWN);
+
+	return hint;
+}
+
 
 } // namespace perg
 
