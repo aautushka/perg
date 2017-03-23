@@ -61,6 +61,11 @@ private:
 			{
 				while (act == PASS_DOWNSTREAM_AND_REPEAT)
 				{
+					if (!_output.active())
+					{
+						return TERMINATE;
+					}
+
 					_output.write(processed);
 					processed = t;
 					act = this->process(processed);
