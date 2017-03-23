@@ -79,3 +79,26 @@ TEST_F(glob_match_text, only_a_star_may_match_empty_string)
 {
 	EXPECT_FALSE(perg::glob_match("", "*"));
 }
+
+TEST_F(glob_match_text, matches_exactly_three_characters)
+{
+	EXPECT_TRUE(perg::glob_match("one", "???"));
+	EXPECT_FALSE(perg::glob_match("on", "???"));
+}
+
+TEST_F(glob_match_text, multiple_stars_work_as_one)
+{
+	EXPECT_TRUE(perg::glob_match("hello world", "h***d"));
+}
+
+TEST_F(glob_match_text, question_mark_is_followed_by_star)
+{
+	EXPECT_TRUE(perg::glob_match("hello", "he?*o"));
+	EXPECT_TRUE(perg::glob_match("hello", "hel?*o"));
+}
+
+TEST_F(glob_match_text, start_is_followed_by_question_mark)
+{
+	EXPECT_TRUE(perg::glob_match("hello", "he*?o"));
+	EXPECT_TRUE(perg::glob_match("hello", "hel*?o"));
+}
