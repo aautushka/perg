@@ -31,7 +31,14 @@ std::unique_ptr<perg::proc<perg::view>> create_filter(const char* mask, const ch
 {
 	if (filename && *filename)
 	{
-		return std::make_unique<perg::filters::forward_mask_filter>(mask);
+		if (reverse)
+		{
+			return std::make_unique<perg::filters::backward_mask_filter>(mask);
+		}
+		else
+		{
+			return std::make_unique<perg::filters::forward_mask_filter>(mask);
+		}
 	}
 	else 
 	{

@@ -50,12 +50,24 @@ private:
 
 		for (T t : tt)
 		{
-			act = this->process(t);
+			T processed = t;
+			act = this->process(processed);
 			if (act == PASS_DOWNSTREAM)
 			{
-				_output.write(t);
+				_output.write(processed);
+				continue;
 			}
-			else if (act == TERMINATE)
+			else if (act == PASS_DOWNSTREAM_AND_REPEAT)
+			{
+				while (act == PASS_DOWNSTREAM_AND_REPEAT)
+				{
+					_output.write(processed);
+					processed = t;
+					act = this->process(processed);
+				}
+			} 
+			
+			if (act == TERMINATE)
 			{
 				break;
 			}

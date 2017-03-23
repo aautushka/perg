@@ -33,34 +33,45 @@ struct forward_mask_filter : public perg::proc<perg::view>
 public:
 	explicit forward_mask_filter(const char* mask)
 		: _mask(mask)
+		, _ptr(nullptr)
 	{
 	}
 
 protected:
 	virtual action process(view& v)
 	{
-		const char* beg = v.data();
-		const char* cur = v.data();
-		const char* end = v.data() + v.size();
-		if (cur != end)
+		if (v.data() != _prev.data())
 		{
-			const char* found = (const char*)memmem(cur, end - cur, _mask.data(), _mask.size());	
+			_prev = v;
+			_ptr = v.data();
+
+		}
+
+		const char* end = v.data() + v.size();
+		if (_ptr < end)
+		{
+			const char* found = (const char*)memmem(_ptr, end - _ptr, _mask.data(), _mask.size());	
 			if (found)
 			{
+				const char* beg = v.data();
+
 				const char* nextline = (const char*)memchr(found, '\n', end - found);		
 				nextline = nextline ? nextline : end;
 
 				const char* prevline = (const char*)memrchr(beg, '\n', found - beg);
 				prevline = prevline ? prevline + 1 : beg;
 				v.assign(prevline, nextline - prevline);
-				return PASS_DOWNSTREAM; 
+				_ptr = nextline + 1;
+				return PASS_DOWNSTREAM_AND_REPEAT; 
 			}
 		}
-		return TERMINATE;
+		return FILTER_OUT;
 	}	
 	
 private:
 	view _mask;
+	view _prev;
+	const char* _ptr;
 
 };
 
@@ -73,7 +84,7 @@ inline void* memrmem(const void* haystack, size_t haystacklen, const void* needl
 
 	const unsigned char* beg = (const unsigned char*)haystack;
 	const unsigned char* end = beg + haystacklen;
-	const unsigned char* cur = end - needleLen;
+	const unsigned char* cur = end - needleLen + 1;
 	const unsigned char* needle = (const unsigned char*) needlePtr;
 
 	while (true)
@@ -102,18 +113,24 @@ struct backward_mask_filter : public perg::proc<perg::view>
 public:
 	explicit backward_mask_filter(const char* mask)
 		: _mask(mask)
+		, _ptr(nullptr)
 	{
 	}
 
 protected:
 	virtual action process(view& v)
 	{
+		if (v.data() != _prev.data())
+		{
+			_prev = v;
+			_ptr = v.data() + v.size();
+		}
+
 		const char* beg = v.data();
 		const char* end = v.data() + v.size();
-		const char* cur = end;
-		if (cur != beg)
+		if (_ptr > beg)
 		{
-			const char* found = (const char*)memrmem(beg, cur - beg, _mask.data(), _mask.size());	
+			const char* found = (const char*)memrmem(beg, _ptr - beg, _mask.data(), _mask.size());	
 			if (found)
 			{
 				const char* nextline = (const char*)memchr(found, '\n', end - found);		
@@ -122,14 +139,17 @@ protected:
 				const char* prevline = (const char*)memrchr(beg, '\n', found - beg);
 				prevline = prevline ? prevline + 1 : beg;
 				v.assign(prevline, nextline - prevline);
-				return PASS_DOWNSTREAM; 
+				_ptr = prevline - 1;
+				return PASS_DOWNSTREAM_AND_REPEAT; 
 			}
 		}
-		return TERMINATE;
+		return FILTER_OUT;
 	}	
 	
 private:
 	view _mask;
+	view _prev;
+	const char* _ptr;
 
 };
 

@@ -49,3 +49,29 @@ TEST_F(backward_mask_filter_test, finds_a_match_at_the_end)
 	result expected = {"good day"};
 	EXPECT_EQ(expected, sink.result());
 }
+
+TEST_F(backward_mask_filter_test, finds_multiple_matches_in_same_buffer)
+{
+	test_source source = {"how are you\nhope you are good"};
+	test_sink sink; 
+	perg::filters::backward_mask_filter filter("you");
+
+	pipeline.connect(source)(filter)(sink);
+	pipeline.wait();
+
+	result expected = {"hope you are good", "how are you"};
+	EXPECT_EQ(expected, sink.result());
+}
+
+TEST_F(backward_mask_filter_test, finds_matches_in_different_messages)
+{
+	test_source source = {"how are you", "hope you are good"};
+	test_sink sink; 
+	perg::filters::backward_mask_filter filter("you");
+
+	pipeline.connect(source)(filter)(sink);
+	pipeline.wait();
+
+	result expected = {"how are you", "hope you are good"};
+	EXPECT_EQ(expected, sink.result());
+}
