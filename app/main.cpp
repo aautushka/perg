@@ -8,11 +8,26 @@
 
 #include "perg/mask_filter.h"
 
-std::unique_ptr<perg::source<perg::view>> create_input(const char* filename, bool reverse)
+std::unique_ptr<perg::source<perg::view>> create_input(const char* mask, const char* filename, bool reverse)
 {
 	if (filename && *filename)
 	{
-		return std::make_unique<perg::raw_file_reader>(filename);
+		perg::view hint = perg::get_hint_from_mask(mask);
+		if (!hint.empty())
+		{
+			return std::make_unique<perg::raw_file_reader>(filename);
+		}
+		else
+		{
+			if (reverse)
+			{
+				return std::make_unique<perg::reverse_line_reader>(filename);
+			}
+			else
+			{
+				return std::make_unique<perg::line_reader>(filename);
+			}
+		}
 	}
 	else
 	{
@@ -29,7 +44,8 @@ std::unique_ptr<perg::source<perg::view>> create_input(const char* filename, boo
 
 std::unique_ptr<perg::proc<perg::view>> create_filter(const char* mask, const char* filename, bool reverse)
 {
-	if (filename && *filename)
+	perg::view hint = perg::get_hint_from_mask(mask);
+	if (filename && *filename && !hint.empty())
 	{
 		if (reverse)
 		{
@@ -40,10 +56,8 @@ std::unique_ptr<perg::proc<perg::view>> create_filter(const char* mask, const ch
 			return std::make_unique<perg::filters::forward_mask_filter>(mask);
 		}
 	}
-	else 
-	{
-		return std::make_unique<perg::filters::mask_filter>(mask);
-	}
+
+	return std::make_unique<perg::filters::mask_filter>(mask);
 }
 
 std::unique_ptr<perg::search_result> create_output(int lines, char separator)
@@ -112,7 +126,7 @@ int main(int argc, char* argv[])
 
 	perg::pipeline<perg::view> pipeline;
 
-	auto input = create_input(filename, reverse);
+	auto input = create_input(searchMask, filename, reverse);
 	auto filter = create_filter(searchMask, filename, reverse);
 	auto output = create_output(lines, separator);
 

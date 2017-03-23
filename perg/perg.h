@@ -357,7 +357,6 @@ protected:
 
 			// remove the trailing newline
 			size_t len = strlen(ptr) - 1;
-			std::cout << strlen(ptr) << std::endl;
 			v.assign(ptr, len);
 			return PASS_DOWNSTREAM;
 		}
