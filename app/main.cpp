@@ -94,14 +94,14 @@ int main(int argc, char* argv[])
 		{
 			case 'h':
 				std::cout <<
-				       	"perg - the grep defiled\n\n"
-					"Options\n"
-					"--help,h         print this message\n"
-					"--file_path,f    input file; stdin if no file provided\n"
-					"--mask,m         search mask (*? are allowed\n"
-					"--max_lines,l    max result lines, default is 1000\n"
-					"--scan_tail,r    read file backwards\n"
-					"--separator,s    line separator (newline is the default)\n";
+				       	"PERG -- grep defiled\n\n"
+					"Options:\n"
+					"--help,h                 print this message\n"
+					"--file_path,f <value>    input file (stdin if no file is provided)\n"
+					"--mask,m <value>         search mask (may include ?*)\n"
+					"--max_lines,l <value>    max lines to output (default is 1000)\n"
+					"--scan_tail,r            read file backwards\n"
+					"--separator,s <value>    line separator (newline is the default)\n";
 				return 0;
 			case 'f':
 				filename = optarg;
