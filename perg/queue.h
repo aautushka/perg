@@ -37,6 +37,7 @@ public:
 		_limit = other._limit;
 		_data = std::move(other._data);
 		other._size = 0;
+		return * this;
 	}
 
 	void limit(size_t num)

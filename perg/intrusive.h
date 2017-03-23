@@ -6,7 +6,7 @@ namespace perg
 // just a regular doubly linked list
 // does not manage memory
 // relies on calling code for memory managment 
-// interface is inspided std::list
+// the interface is inspided by std::list
 template <typename T>
 class intrusive_list
 {

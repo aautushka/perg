@@ -43,7 +43,7 @@ private:
 		return !tt.empty();	
 	}
 
-	bool process_remaining()
+	void process_remaining()
 	{
 		while (process_one());
 	}

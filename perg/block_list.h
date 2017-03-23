@@ -202,8 +202,10 @@ public:
 		T* operator ->() {return &**this;}
 
 	private:
-		using list_iterator = typename self_type::list_t::iterator;
-		using block_iterator = typename self_type::block_t::iterator;
+		using block_t = cyclic_list<T, N>;
+		using list_t = list<block_t>;
+		using list_iterator = typename list_t::iterator;
+		using block_iterator = typename block_t::iterator;
 
 		list_iterator _iter_list;
 		block_iterator _iter_block; 

@@ -140,7 +140,7 @@ public:
 		bool operator !=(const iterator& other) const { return !(*this == other); }
 		T& operator *() { return list->data[cur]; } 
 		const T& operator *() const { return list->data[cur]; }
-		iterator& operator ++() { cur = list->next(cur); --left; } 
+		iterator& operator ++() { cur = list->next(cur); --left; return *this; }
 		iterator operator ++(int) { iterator prev(*this); ++(*this); return prev; }
 		T* operator ->() { &**this; }
 		const T* operator ->() const { &**this; }
